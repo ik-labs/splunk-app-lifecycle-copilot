@@ -1,0 +1,206 @@
+[
+  {
+    "type": "run_started",
+    "ts": "2026-06-04T08:46:27Z",
+    "loop": "appinspect"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:28Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "check": "check_user_seed_conf_deny_list",
+    "file": "default/user-seed.conf",
+    "line": null,
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:28Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:28Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_that_local_does_not_exist:local/",
+    "check": "check_that_local_does_not_exist",
+    "file": "local/",
+    "line": null,
+    "message": "A 'local' directory exists in the app."
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-04T08:46:28Z",
+    "failure_id": "appinspect:check_that_local_does_not_exist:local/",
+    "check": "check_that_local_does_not_exist",
+    "file": "local/",
+    "line": null,
+    "message": "A 'local' directory exists in the app.",
+    "text": "The app package contains a local/ directory. AppInspect blocks this because local configuration is instance-specific and should not ship inside a distributable Splunk app."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-04T08:46:28Z",
+    "failure_id": "appinspect:check_that_local_does_not_exist:local/",
+    "check": "check_that_local_does_not_exist",
+    "file": "local/",
+    "line": null,
+    "message": "A 'local' directory exists in the app.",
+    "summary": "Removed packaged local/ directory from the working copy."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-04T08:46:29Z",
+    "failure_id": "appinspect:check_that_local_does_not_exist:local/",
+    "check": "check_that_local_does_not_exist",
+    "file": "local/",
+    "line": null,
+    "message": "A 'local' directory exists in the app.",
+    "result": "pass",
+    "iteration": 1
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-04T08:46:29Z",
+    "stage": "appinspect",
+    "iteration": 1,
+    "failure": "check_that_local_does_not_exist (local/)",
+    "diagnosis": "The app package contains a local/ directory. AppInspect blocks this because local configuration is instance-specific and should not ship inside a distributable Splunk app.",
+    "patch": "Removed packaged local/ directory from the working copy.",
+    "rationale": "Remove local/ from the packaged working copy and keep distributable defaults under default/.",
+    "result": "pass",
+    "failure_id": "appinspect:check_that_local_does_not_exist:local/",
+    "message": "A 'local' directory exists in the app."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:29Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "check": "check_user_seed_conf_deny_list",
+    "file": "default/user-seed.conf",
+    "line": null,
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:29Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf"
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-04T08:46:29Z",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "check": "check_user_seed_conf_deny_list",
+    "file": "default/user-seed.conf",
+    "line": null,
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf",
+    "text": "The app ships default/user-seed.conf. AppInspect blocks this because app-delivered default credentials are not allowed for Splunk Cloud."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-04T08:46:29Z",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "check": "check_user_seed_conf_deny_list",
+    "file": "default/user-seed.conf",
+    "line": null,
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf",
+    "summary": "Removed default/user-seed.conf from the working copy."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-04T08:46:30Z",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "check": "check_user_seed_conf_deny_list",
+    "file": "default/user-seed.conf",
+    "line": null,
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf",
+    "result": "pass",
+    "iteration": 2
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-04T08:46:30Z",
+    "stage": "appinspect",
+    "iteration": 2,
+    "failure": "check_user_seed_conf_deny_list (default/user-seed.conf)",
+    "diagnosis": "The app ships default/user-seed.conf. AppInspect blocks this because app-delivered default credentials are not allowed for Splunk Cloud.",
+    "patch": "Removed default/user-seed.conf from the working copy.",
+    "rationale": "Remove default/user-seed.conf; user provisioning belongs to Splunk authentication, not app package content.",
+    "result": "pass",
+    "failure_id": "appinspect:check_user_seed_conf_deny_list:default/user-seed.conf",
+    "message": "App contains default/user-seed.conf, which is not allowed in Splunk Cloud. Details: user-seed.conf configures default login and password information, which is not permitted. Remove default/user-seed.conf from your app. File: default/user-seed.conf"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T08:46:30Z",
+    "loop": "appinspect",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf"
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-04T08:46:30Z",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf",
+    "text": "The app ships default/outputs.conf with forwarding enabled. AppInspect blocks this because packaged apps must not configure external forwarding by default."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-04T08:46:30Z",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf",
+    "summary": "Removed default/outputs.conf from the working copy."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-04T08:46:31Z",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "check": "check_if_outputs_conf_exists",
+    "file": "default/outputs.conf",
+    "line": null,
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf",
+    "result": "pass",
+    "iteration": 3
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-04T08:46:31Z",
+    "stage": "appinspect",
+    "iteration": 3,
+    "failure": "check_if_outputs_conf_exists (default/outputs.conf)",
+    "diagnosis": "The app ships default/outputs.conf with forwarding enabled. AppInspect blocks this because packaged apps must not configure external forwarding by default.",
+    "patch": "Removed default/outputs.conf from the working copy.",
+    "rationale": "Remove default/outputs.conf from the package so the app cannot silently redirect data to external indexers.",
+    "result": "pass",
+    "failure_id": "appinspect:check_if_outputs_conf_exists:default/outputs.conf",
+    "message": "2 AppInspect failure messages for default/outputs.conf: From default/outputs.conf, output is enabled by default. This is prohibited in Splunk Cloud. Stanza: [tcpout]. File: default/outputs.conf"
+  },
+  {
+    "type": "run_complete",
+    "ts": "2026-06-04T08:46:31Z",
+    "loop": "appinspect",
+    "status": "clean",
+    "iterations": 3
+  }
+]

@@ -119,6 +119,25 @@ error: 0
 4. VS Code cutaway shows the same agent entry point from the IDE.
 5. Provenance ledger shows every diagnosis, patch, rationale, and validation result.
 
+## Dashboard Replay Mode
+
+The first dashboard milestone is AppInspect replay only. It renders committed
+demo events from `demo/appinspect_events.json` and does not require Splunk,
+MCP, or a live WebSocket.
+
+```bash
+cd ui/dashboard
+bun install
+bun run dev
+```
+
+Verification:
+
+```bash
+bun run test
+bun run build
+```
+
 ## Design Principle
 
 The self-heal engine is intentionally constrained. The LLM produces diagnosis and rationale text; deterministic patch functions make file changes. That gives the demo repeatability, keeps patch provenance reviewable, and makes the platform thesis credible.

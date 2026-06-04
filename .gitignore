@@ -1,5 +1,6 @@
 # macOS / editor noise
 .DS_Store
+.playwright-mcp/
 .idea/
 .vscode/*
 !.vscode/tasks.json
