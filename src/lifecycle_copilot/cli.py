@@ -8,6 +8,7 @@ from rich.console import Console
 from rich.table import Table
 
 from .appinspect.loop import AppInspectLoop
+from .onboarding.loop import OnboardingLoop
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -16,6 +17,8 @@ def main(argv: list[str] | None = None) -> int:
 
     if args.command == "appinspect":
         return run_appinspect(args)
+    if args.command == "onboard":
+        return run_onboard(args)
 
     parser.error("No command selected.")
     return 2
@@ -32,12 +35,20 @@ def build_parser() -> argparse.ArgumentParser:
     appinspect.add_argument("app_dir", type=Path)
     appinspect.add_argument("--out", type=Path, default=None)
     appinspect.add_argument("--max-iters", type=int, default=5)
+
+    onboard = subcommands.add_parser(
+        "onboard",
+        help="Validate raw log extraction candidates against Splunk through MCP.",
+    )
+    onboard.add_argument("log_file", type=Path)
+    onboard.add_argument("--out", type=Path, default=None)
+    onboard.add_argument("--max-iters", type=int, default=3)
     return parser
 
 
 def run_appinspect(args: argparse.Namespace) -> int:
     console = Console()
-    run_dir = args.out or default_run_dir()
+    run_dir = args.out or default_run_dir("appinspect")
 
     try:
         result = AppInspectLoop(
@@ -66,6 +77,38 @@ def run_appinspect(args: argparse.Namespace) -> int:
     return 0 if result.status == "clean" else 2
 
 
-def default_run_dir() -> Path:
+def run_onboard(args: argparse.Namespace) -> int:
+    console = Console()
+    run_dir = args.out or default_run_dir("onboarding")
+
+    try:
+        result = OnboardingLoop(
+            log_file=args.log_file,
+            run_dir=run_dir,
+            max_iters=args.max_iters,
+        ).run()
+    except FileExistsError as exc:
+        console.print(f"[red]Run failed:[/red] {exc}")
+        return 2
+    except Exception as exc:
+        console.print(f"[red]Run failed:[/red] {exc}")
+        return 1
+
+    table = Table(title="Onboarding MCP Self-Heal Summary")
+    table.add_column("Metric")
+    table.add_column("Value")
+    table.add_row("Status", result.status)
+    table.add_row("Iterations", str(result.iterations))
+    table.add_row("Ingested events", str(result.ingested_count))
+    table.add_row("Initial failures", str(result.initial_summary.get("failure", 0)))
+    table.add_row("Final failures", str(result.final_summary.get("failure", 0)))
+    table.add_row("Splunk source", result.splunk_source)
+    table.add_row("Run artifacts", str(result.run_dir))
+    console.print(table)
+
+    return 0 if result.status == "clean" else 2
+
+
+def default_run_dir(prefix: str) -> Path:
     timestamp = datetime.now().strftime("%Y%m%d-%H%M%S")
-    return Path("runs") / f"appinspect-{timestamp}"
+    return Path("runs") / f"{prefix}-{timestamp}"

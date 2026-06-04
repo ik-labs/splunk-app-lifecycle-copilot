@@ -111,6 +111,33 @@ failure: 3
 error: 0
 ```
 
+## Onboarding MCP Slice
+
+The onboarding slice is live-only: it ingests `fixtures/onboarding/sample_upi.log`
+through HEC, validates inline SPL candidates with MCP `splunk_run_query`, and
+hard-fails if the Splunk MCP Server app or `splunk_run_query` tool is unavailable.
+It does not use Splunk AI Assistant, Splunk SDK search fallback, or generated
+`props.conf` / `transforms.conf` yet.
+
+Required `.env` values:
+
+- `SPLUNK_HEC_TOKEN`
+- `SPLUNK_ONBOARDING_INDEX=main`
+- `SPLUNK_ONBOARDING_SOURCETYPE=upi_gateway_raw`
+- `SPLUNK_MCP_ENDPOINT`
+- `SPLUNK_MCP_ENCRYPTED_TOKEN`
+- `SPLUNK_MCP_TLS_VERIFY=false` for local self-signed Docker dev
+
+Run it:
+
+```bash
+copilot onboard fixtures/onboarding/sample_upi.log --out runs/onboarding-demo
+```
+
+Expected flow: `candidate-00` fails coverage checks, the deterministic patcher
+switches to `candidate-01`, MCP revalidation passes, six CIM mapping events and
+two PII flag events are written for dashboard replay.
+
 ## Demo Flow
 
 1. Terminal starts the agent and proves this is real software.
