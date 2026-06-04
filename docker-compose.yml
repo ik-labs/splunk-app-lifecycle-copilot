@@ -1,0 +1,42 @@
+services:
+  splunk:
+    image: splunk/splunk:latest
+    container_name: splunk-copilot
+    hostname: splunk
+    # M-series Macs run the x86 image under emulation; pin the platform so it
+    # doesn't fail to pull. On native amd64 hosts this line is harmless.
+    platform: linux/amd64
+    environment:
+      - SPLUNK_START_ARGS=--accept-license
+      # Required on 10.x images: accept the current Splunk General Terms.
+      - SPLUNK_GENERAL_TERMS=--accept-sgt-current-at-splunk-com
+      # Pulled from .env. Must satisfy Splunk's password policy (8+ chars).
+      - SPLUNK_PASSWORD=${SPLUNK_PASSWORD}
+      # Pre-creates an HEC token so onboarding-loop ingestion works on first boot.
+      - SPLUNK_HEC_TOKEN=${SPLUNK_HEC_TOKEN}
+    ports:
+      - "8000:8000"   # Splunk Web UI
+      - "8088:8088"   # HTTP Event Collector (log ingestion)
+      - "8089:8089"   # splunkd management API (splunklib SDK + MCP server)
+    volumes:
+      - splunk-var:/opt/splunk/var   # persist indexed data across restarts
+      - splunk-etc:/opt/splunk/etc   # persist config/apps across restarts
+    # First boot takes ~1-2 min to reach "healthy". Pre-warm before any demo.
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 15s
+      timeout: 10s
+      retries: 20
+      start_period: 120s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4G
+        reservations:
+          memory: 2G
+    restart: unless-stopped
+
+volumes:
+  splunk-var:
+  splunk-etc:

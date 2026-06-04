@@ -1,0 +1,22 @@
+[project]
+name = "splunk-app-lifecycle-copilot"
+version = "0.1.0"
+description = "Hackathon MVP for self-healing Splunk onboarding and AppInspect loops."
+readme = "README.md"
+requires-python = ">=3.13"
+license = "MIT"
+dependencies = [
+  "pydantic>=2.7,<3",
+  "python-dotenv>=1.0,<2",
+  "requests>=2.31,<3",
+  "rich>=13.7,<14",
+  "splunk-appinspect>=4.2.1,<5",
+  "splunk-sdk[ai]>=3.0.0,<4",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+
+[tool.ruff]
+target-version = "py313"
+line-length = 100

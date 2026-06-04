@@ -1,0 +1,150 @@
+2026-06-02T10:03:52+05:30 txn_id=UPI2026060291426353266 method=UPI_QR vpa=merchant_reliance_fresh@oksbi amt=1971.36 status=SUCCESS rrn=366084226887 payer_mobile=9736806745 payer_vpa=customer1761@ibl gstin=29HYENF5085F1ZM
+2026-06-02T06:44:55+05:30 txn_id=UPI2026060219833783961 method=UPI_INTENT vpa=merchant_swiggy@paytm amt=5123.37 status=SUCCESS payer_vpa=customer2950@okhdfcbank gstin=24ZFINW0316Q1ZM
+1780381199979 txn_id=UPI2026060211130269904 method=UPI_MANDATE vpa=merchant_more_retail@ybl amt=4823.86 status=TIMEOUT rrn=801775263434 payer_vpa=customer6959@okicici gstin=07BWTVM6070O1ZM
+1780387662979 amt=500.00 PARTIAL_RECORD
+1780372581979 txn_id=UPI2026060214958243163 method=UPI_MANDATE vpa=merchant_chai_point@ybl amt=9170.04 status=FAILED rrn=820432575828 payer_vpa=customer2959@oksbi gstin=29XSOFI1992O1ZM
+2026-06-02T04:39:21+05:30 txn_id=UPI2026060297279703698 method=UPI_QR vpa=merchant_swiggy@ybl amt=4415.52 status=SUCCESS rrn=955697366648 payer_mobile=9770600113 payer_vpa=customer3931@ibl gstin=29JEQEP9428A1ZM
+2026-06-01T10:00:00+05:30 txn_id=UPI20260601 status=
+1780318824979 txn_id=UPI2026060294359086017 method=UPI_MANDATE vpa=merchant_reliance_fresh@ybl amt=968.26 status=SUCCESS rrn=156944415041 payer_vpa=customer7961@okicici gstin=24LXNAU4249I1ZM
+1780320431979 txn_id=UPI2026060298299201291 method=UPI_QR vpa=merchant_local_kirana@ibl amt=5438.86 status=SUCCESS rrn=636011101025 payer_vpa=customer5569@okhdfcbank gstin=33UPSST0650I1ZM
+2026-06-01T15:53:00+05:30 txn_id=UPI2026060287356078145 method=UPI_MANDATE vpa=merchant_more_retail@ybl amt=9126.06 status=SUCCESS rrn=595062337088 payer_vpa=customer3566@oksbi gstin=07DABWK2228W1ZM
+1780377157979 txn_id=UPI2026060288813648360 method=UPI_INTENT vpa=merchant_local_kirana@ybl amt=9169.51 status=SUCCESS payer_vpa=customer8221@ybl gstin=07TAWPR1620D1ZM
+1780311426979 txn_id=UPI2026060267675136075 method=UPI_INTENT vpa=merchant_medplus@okicici amt=2832.13 status=SUCCESS rrn=460769504776 payer_vpa=customer7049@okhdfcbank gstin=29IOXFF7817X1ZM
+2026-06-01T10:00:00+05:30 txn_id=UPI20260601 status=
+1780341849979 txn_id=UPI2026060295661321383 method=UPI_COLLECT vpa=merchant_bigbasket@ibl amt=8310.3 status=SUCCESS rrn=875111928141 payer_vpa=customer4068@oksbi gstin=29ADMVU3372F1ZM
+1780313730979 txn_id=UPI2026060267638075255 method=UPI_MANDATE vpa=merchant_more_retail@okaxis amt=2271.15 status=FAILED rrn=859076984976 payer_mobile=9060113138 payer_vpa=customer5724@okhdfcbank gstin=27DVZFV8730I1ZM
+1780384847979 txn_id=UPI2026060250210940599 method=UPI_QR vpa=merchant_local_kirana@oksbi amt=5453.16 status=SUCCESS payer_vpa=customer4558@okaxis gstin=33GLEPW3496S1ZM
+1780385277979 txn_id=UPI2026060219549416431 method=UPI_QR vpa=merchant_medplus@ibl amt=511.89 status=SUCCESS rrn=738470753798 payer_vpa=customer0698@okicici gstin=24INZYF6984E1ZM
+1780371087979 txn_id=UPI2026060226119595115 method=UPI_MANDATE vpa=merchant_more_retail@okicici amt=3559.08 status=REVERSED rrn=313173650816 payer_vpa=customer6885@ibl gstin=29AUFDR5532C1ZM
+2026-06-02T01:20:53+05:30 txn_id=UPI2026060228646305679 method=UPI_INTENT vpa=merchant_reliance_fresh@ibl amt=874.29 status=REVERSED payer_vpa=customer1764@paytm gstin=27QGHPO9266S1ZM
+2026-06-01T17:07:25+05:30 txn_id=UPI2026060232685583442 method=UPI_COLLECT vpa=merchant_reliance_fresh@okhdfcbank amt=5471.06 status=SUCCESS rrn=132904562530 payer_vpa=customer0036@ybl gstin=29IPPZR0809Y1ZM
+2026-06-01T18:26:39+05:30 txn_id=UPI2026060208880453666 method=UPI_COLLECT vpa=merchant_more_retail@ybl amt=2564.12 status=SUCCESS rrn=722348001111 payer_vpa=customer8272@okhdfcbank gstin=33OJHVO4316V1ZM
+2026-06-01T15:27:27+05:30 txn_id=UPI2026060241879344637 method=UPI_MANDATE vpa=merchant_swiggy@okaxis amt=4780.68 status=SUCCESS rrn=373415697502 payer_vpa=customer1809@okaxis gstin=24MCNID8444Z1ZM
+2026-06-02T06:28:08+05:30 txn_id=UPI2026060238988818804 method=UPI_INTENT vpa=merchant_bigbasket@ybl amt=8184.86 status=SUCCESS rrn=386426316507 payer_vpa=customer0801@ybl gstin=24HCKVD9275W1ZM
+2026-06-01T20:37:10+05:30 txn_id=UPI2026060282072902539 method=UPI_MANDATE vpa=merchant_bigbasket@okhdfcbank amt=4621.13 status=REVERSED rrn=520943436598 payer_vpa=customer2924@paytm gstin=19LCWZF9583H1ZM
+1780352990979 txn_id=UPI2026060269515765844 method=UPI_QR vpa=merchant_medplus@okicici amt=6740.82 status=FAILED rrn=350540628584 payer_vpa=customer4555@ibl gstin=33SRKYR8694P1ZM
+1780348073979 txn_id=UPI2026060212053511290 method=UPI_COLLECT vpa=merchant_swiggy@ybl amt=4143.82 status=TIMEOUT rrn=903949680047 payer_vpa=customer2016@okhdfcbank gstin=19RLMLG1032Y1ZM
+1780371036979 txn_id=UPI2026060235766202653 method=UPI_MANDATE vpa=merchant_bigbasket@okaxis amt=5732.58 status=SUCCESS rrn=815430259958 payer_vpa=customer9984@paytm gstin=07CQCAA7794D1ZM
+2026-06-01T17:45:08+05:30 txn_id=UPI2026060281180593934 method=UPI_INTENT vpa=merchant_local_kirana@okhdfcbank amt=2408.43 status=SUCCESS rrn=320487760110 payer_vpa=customer8245@paytm gstin=07CTFST6949M1ZM
+2026-06-02T03:59:22+05:30 txn_id=UPI2026060207595921386 method=UPI_INTENT vpa=merchant_swiggy@ibl amt=7633.78 status=SUCCESS rrn=456991225650 payer_vpa=customer9005@oksbi gstin=27KDQYW5867Z1ZM
+2026-06-02T06:48:19+05:30 txn_id=UPI2026060295086831109 method=UPI_INTENT vpa=merchant_more_retail@ibl amt=4273.58 status=TIMEOUT rrn=368382908742 payer_vpa=customer4648@okicici gstin=19ZZHWC7623O1ZM
+2026-06-01T23:40:06+05:30 txn_id=UPI2026060262711669810 method=UPI_MANDATE vpa=merchant_swiggy@okicici amt=2061.01 status=SUCCESS rrn=450764748294 payer_vpa=customer0098@ibl gstin=33IGJIN8786E1ZM
+2026-06-02T00:19:05+05:30 txn_id=UPI2026060280417883190 method=UPI_QR vpa=merchant_chai_point@okhdfcbank amt=8523.15 status=SUCCESS rrn=499058503977 payer_mobile=9730109139 payer_vpa=customer9003@okaxis gstin=19NJMKR0259D1ZM
+1780382636979 txn_id=UPI2026060270340672329 method=UPI_INTENT vpa=merchant_more_retail@okaxis amt=4955.72 status=TIMEOUT rrn=032444207993 payer_vpa=customer0520@oksbi gstin=29LZMJR9915F1ZM
+1780352727979 txn_id=UPI2026060282794613520 method=UPI_MANDATE vpa=merchant_local_kirana@okaxis amt=1116.93 status=SUCCESS rrn=673322285838 payer_vpa=customer7688@ibl gstin=07IUVVM2660R1ZM
+1780337803979 txn_id=UPI2026060229988199012 method=UPI_INTENT vpa=merchant_swiggy@ybl amt=8510.42 status=FAILED rrn=335909551234 payer_vpa=customer3092@ibl gstin=19IEKTQ7738U1ZM
+2026-06-02T03:23:10+05:30 txn_id=UPI2026060296891897007 method=UPI_COLLECT vpa=merchant_local_kirana@okicici amt=2873.95 status=SUCCESS payer_vpa=customer4892@ibl gstin=29XOUEA9884X1ZM
+2026-06-02T05:18:49+05:30 txn_id=UPI2026060259025663616 method=UPI_MANDATE vpa=merchant_bigbasket@okaxis amt=942.02 status=SUCCESS payer_vpa=customer9928@okhdfcbank gstin=27BFGOO3564J1ZM
+2026-06-01T16:59:09+05:30 txn_id=UPI2026060238421384793 method=UPI_MANDATE vpa=merchant_medplus@okaxis amt=3426.47 status=TIMEOUT rrn=282797057764 payer_vpa=customer2514@okhdfcbank gstin=33LJWDF3615W1ZM
+2026-06-01T19:38:16+05:30 txn_id=UPI2026060267654789622 method=UPI_QR vpa=merchant_chai_point@ibl amt=4888.25 status=SUCCESS rrn=842520766683 payer_vpa=customer8607@oksbi gstin=29LRRRN5197T1ZM
+1780339765980 txn_id=UPI2026060279257727287 method=UPI_INTENT vpa=merchant_reliance_fresh@okicici amt=6947.78 status=SUCCESS rrn=840705304222 payer_vpa=customer5429@ibl gstin=24NPESD8405N1ZM
+2026-06-01T15:15:13+05:30 txn_id=UPI2026060282029139245 method=UPI_MANDATE vpa=merchant_chai_point@paytm amt=2626.59 status=REVERSED rrn=443950956416 payer_vpa=customer5828@okicici gstin=27CWAID3085B1ZM
+1780359820980 txn_id=UPI2026060267891206572 method=UPI_COLLECT vpa=merchant_chai_point@ybl amt=718.91 status=PENDING payer_vpa=customer2981@ibl gstin=29VKOEK2045D1ZM
+2026-06-02T02:07:53+05:30 txn_id=UPI2026060214321599993 method=UPI_QR vpa=merchant_reliance_fresh@ybl amt=6284.33 status=SUCCESS rrn=269237489903 payer_vpa=customer1854@okicici gstin=27CHYUZ4445L1ZM
+2026-06-01T21:15:06+05:30 txn_id=UPI2026060236606270989 method=UPI_INTENT vpa=merchant_medplus@okaxis amt=3795.1 status=FAILED rrn=147154767580 payer_mobile=9312917831 payer_vpa=customer4611@oksbi gstin=29GTRVA0606T1ZM
+2026-06-01T23:30:41+05:30 txn_id=UPI2026060230341540482 method=UPI_MANDATE vpa=merchant_chai_point@okicici amt=3089.15 status=SUCCESS rrn=719784841578 payer_vpa=customer1072@okicici gstin=33UMLRB8031R1ZM
+2026-06-02T08:25:22+05:30 txn_id=UPI2026060206435839330 method=UPI_INTENT vpa=merchant_local_kirana@okhdfcbank amt=3688.31 status=SUCCESS payer_vpa=customer0202@paytm gstin=33YINLT6295C1ZM
+2026-06-02T11:14:23+05:30 txn_id=UPI2026060221678430733 method=UPI_MANDATE vpa=merchant_more_retail@oksbi amt=5713.91 status=SUCCESS payer_vpa=customer5774@ibl gstin=29PHVXI7678G1ZM
+2026-06-02T12:50:15+05:30 txn_id=UPI2026060270831337076 method=UPI_COLLECT vpa=merchant_bigbasket@okaxis amt=5777.0 status=SUCCESS payer_vpa=customer3127@ibl gstin=29GARPQ2866W1ZM
+2026-06-01T21:28:05+05:30 txn_id=UPI2026060246201555008 method=UPI_MANDATE vpa=merchant_bigbasket@okhdfcbank amt=394.88 status=SUCCESS rrn=065188569212 payer_mobile=9380941186 payer_vpa=customer9664@okaxis gstin=19WRACL3725B1ZM
+1780370307980 txn_id=UPI2026060275842130041 method=UPI_QR vpa=merchant_reliance_fresh@okaxis amt=9651.53 status=SUCCESS rrn=580711251283 payer_vpa=customer0286@okhdfcbank gstin=27UDLWB1907W1ZM
+1780358894980 txn_id=UPI2026060239153548512 method=UPI_MANDATE vpa=merchant_chai_point@ybl amt=8580.18 status=SUCCESS payer_vpa=customer2378@paytm gstin=19XYWDR7592Q1ZM
+2026-06-01T19:53:43+05:30 txn_id=UPI2026060211237090558 method=UPI_INTENT vpa=merchant_more_retail@oksbi amt=5265.32 status=SUCCESS rrn=251143699011 payer_vpa=customer8284@okicici gstin=29NHCRU5392L1ZM
+2026-06-01T17:41:50+05:30 txn_id=UPI2026060224764960971 method=UPI_COLLECT vpa=merchant_bigbasket@oksbi amt=1685.77 status=TIMEOUT rrn=000085253000 payer_mobile=9610846100 payer_vpa=customer8990@okicici gstin=07PNJFS1317Q1ZM
+2026-06-01T15:46:27+05:30 txn_id=UPI2026060271347540186 method=UPI_COLLECT vpa=merchant_local_kirana@ybl amt=6497.08 status=SUCCESS rrn=900805176849 payer_vpa=customer4544@ybl gstin=24OLHGS4025Q1ZM
+1780311353980 txn_id=UPI2026060205806169163 method=UPI_COLLECT vpa=merchant_chai_point@oksbi amt=7644.15 status=TIMEOUT rrn=836865519053 payer_vpa=customer0178@ibl gstin=33CMHHS1879P1ZM
+1780378119980 txn_id=UPI2026060212841942702 method=UPI_COLLECT vpa=merchant_chai_point@oksbi amt=1713.47 status=SUCCESS rrn=002427686131 payer_vpa=customer0878@ybl gstin=29QCHWD2805L1ZM
+2026-06-01T21:56:49+05:30 txn_id=UPI2026060294897898846 method=UPI_QR vpa=merchant_reliance_fresh@paytm amt=2342.5 status=SUCCESS rrn=827425719655 payer_vpa=customer5773@okaxis gstin=07ZFYOY9884I1ZM
+1780387165980 txn_id=UPI2026060223211245205 method=UPI_INTENT vpa=merchant_bigbasket@okicici amt=3327.49 status=SUCCESS rrn=603231385853 payer_vpa=customer9661@okhdfcbank gstin=33CMFUO2772G1ZM
+1780375774980 txn_id=UPI2026060202005247433 method=UPI_QR vpa=merchant_local_kirana@okaxis amt=3688.31 status=FAILED rrn=541943796180 payer_vpa=customer5043@ybl gstin=29QYXNW8162U1ZM
+2026-06-02T02:30:08+05:30 txn_id=UPI2026060282737091683 method=UPI_MANDATE vpa=merchant_medplus@paytm amt=5362.0 status=SUCCESS rrn=236020627920 payer_vpa=customer9061@okaxis gstin=19YFOLY1200F1ZM
+2026-06-02T08:00:07+05:30 txn_id=UPI2026060261984811551 method=UPI_QR vpa=merchant_swiggy@oksbi amt=6898.47 status=SUCCESS payer_mobile=9988569355 payer_vpa=customer9916@ybl gstin=19RBJTH3687V1ZM
+2026-06-02T05:07:14+05:30 txn_id=UPI2026060257736247911 method=UPI_INTENT vpa=merchant_reliance_fresh@okhdfcbank amt=7311.03 status=FAILED rrn=383870080518 payer_vpa=customer2559@okhdfcbank gstin=29CWGNY4742Q1ZM
+2026-06-02T01:12:46+05:30 txn_id=UPI2026060234561050994 method=UPI_INTENT vpa=merchant_bigbasket@oksbi amt=9835.15 status=PENDING rrn=539926195289 payer_vpa=customer0552@oksbi gstin=27ILQGY9658Z1ZM
+2026-06-02T06:12:10+05:30 txn_id=UPI2026060225258345535 method=UPI_MANDATE vpa=merchant_bigbasket@oksbi amt=6901.05 status=SUCCESS rrn=141663867951 payer_vpa=customer1848@okhdfcbank gstin=07GZFIY4214V1ZM
+2026-06-01T16:10:45+05:30 txn_id=UPI2026060282976676444 method=UPI_QR vpa=merchant_bigbasket@ybl amt=9896.96 status=PENDING payer_vpa=customer5072@okaxis gstin=24VATNN8196G1ZM
+2026-06-01T14:23:09+05:30 txn_id=UPI2026060252273973040 method=UPI_QR vpa=merchant_local_kirana@okaxis amt=423.07 status=SUCCESS rrn=865128074848 payer_vpa=customer3029@ybl gstin=27PUFQV7363D1ZM
+1780310613981 txn_id=UPI2026060203136549969 method=UPI_INTENT vpa=merchant_reliance_fresh@okhdfcbank amt=4734.02 status=SUCCESS rrn=275317533354 payer_vpa=customer8056@oksbi gstin=24YASOT6824W1ZM
+1780339558981 txn_id=UPI2026060250677369485 method=UPI_INTENT vpa=merchant_local_kirana@ibl amt=2070.47 status=SUCCESS rrn=249951103579 payer_vpa=customer1595@ibl gstin=07BLTWA5425T1ZM
+1780327357981 txn_id=UPI2026060296012626473 method=UPI_INTENT vpa=merchant_bigbasket@okicici amt=845.6 status=PENDING rrn=989180475090 payer_vpa=customer6999@ybl gstin=24MHFQB9181D1ZM
+2026-06-02T06:34:39+05:30 txn_id=UPI2026060248916509314 method=UPI_QR vpa=merchant_medplus@oksbi amt=8684.25 status=TIMEOUT rrn=301897163256 payer_mobile=9918310586 payer_vpa=customer8931@okicici gstin=33HQIEX9133B1ZM
+2026-06-02T01:50:22+05:30 txn_id=UPI2026060297623065218 method=UPI_QR vpa=merchant_reliance_fresh@ibl amt=4076.45 status=FAILED rrn=944110294330 payer_vpa=customer7587@okhdfcbank gstin=27CRCFQ3107Z1ZM
+2026-06-01T18:23:12+05:30 txn_id=UPI2026060245729011697 method=UPI_MANDATE vpa=merchant_medplus@oksbi amt=3046.35 status=SUCCESS rrn=025028691931 payer_vpa=customer2176@okicici gstin=19GNBYY4877D1ZM
+1780340045981 txn_id=UPI2026060220980177101 method=UPI_INTENT vpa=merchant_chai_point@oksbi amt=527.55 status=SUCCESS payer_vpa=customer0880@paytm gstin=24SAHHT5222V1ZM
+1780327773981 txn_id=UPI2026060238317200905 method=UPI_COLLECT vpa=merchant_swiggy@ibl amt=4082.42 status=REVERSED rrn=245132630675 payer_vpa=customer7511@paytm gstin=19UHAET3083A1ZM
+2026-06-01T20:27:06+05:30 txn_id=UPI2026060247356456704 method=UPI_QR vpa=merchant_medplus@paytm amt=9604.38 status=SUCCESS rrn=141671408525 payer_mobile=9527794993 payer_vpa=customer1198@ybl gstin=33ZDGIP4732J1ZM
+2026-06-02T10:51:54+05:30 txn_id=UPI2026060248034751647 method=UPI_QR vpa=merchant_reliance_fresh@okhdfcbank amt=4397.5 status=PENDING rrn=013583752401 payer_mobile=9774995450 payer_vpa=customer3146@okhdfcbank gstin=33DNCGZ1875X1ZM
+2026-06-01T22:07:31+05:30 txn_id=UPI2026060209638972747 method=UPI_QR vpa=merchant_more_retail@paytm amt=637.23 status=SUCCESS rrn=423894521023 payer_mobile=9567348170 payer_vpa=customer0428@paytm gstin=33AKCTH1891Z1ZM
+2026-06-01T14:32:43+05:30 txn_id=UPI2026060228963861333 method=UPI_COLLECT vpa=merchant_swiggy@ibl amt=3485.36 status=SUCCESS rrn=250241692090 payer_mobile=9557523963 payer_vpa=customer6058@ybl gstin=07OBBBN9480U1ZM
+1780358323981 txn_id=UPI2026060249683305615 method=UPI_QR vpa=merchant_chai_point@paytm amt=5050.72 status=SUCCESS rrn=587230604544 payer_vpa=customer5658@okaxis gstin=29QWFMD8856D1ZM
+2026-06-01T19:31:31+05:30 txn_id=UPI2026060296081629530 method=UPI_MANDATE vpa=merchant_swiggy@ibl amt=2325.12 status=FAILED rrn=075992268329 payer_vpa=customer7981@okaxis gstin=07EDFYA6722H1ZM
+1780305683981 txn_id=UPI2026060201230503249 method=UPI_COLLECT vpa=merchant_medplus@ibl amt=7669.85 status=SUCCESS rrn=896342584794 payer_vpa=customer8889@ybl gstin=29SENJM4971J1ZM
+2026-06-01T19:55:21+05:30 txn_id=UPI2026060200672500361 method=UPI_INTENT vpa=merchant_medplus@ibl amt=9714.92 status=TIMEOUT rrn=106123177741 payer_vpa=customer5513@okaxis gstin=29MACPJ8184E1ZM
+1780351245981 txn_id=UPI2026060216274540014 method=UPI_QR vpa=merchant_chai_point@oksbi amt=9467.13 status=SUCCESS rrn=243569350892 payer_vpa=customer0387@ybl gstin=27IMULI7556V1ZM
+1780302450981 txn_id=UPI2026060299781777120 method=UPI_INTENT vpa=merchant_local_kirana@okhdfcbank amt=5949.5 status=FAILED rrn=432517178173 payer_mobile=9089420234 payer_vpa=customer3097@okhdfcbank gstin=24INMFM4956L1ZM
+1780323905981 txn_id=UPI2026060294777238351 method=UPI_QR vpa=merchant_swiggy@okhdfcbank amt=3524.66 status=FAILED rrn=803349204646 payer_vpa=customer6628@paytm gstin=27ZZFUV3324M1ZM
+2026-06-02T03:10:37+05:30 txn_id=UPI2026060297846446333 method=UPI_COLLECT vpa=merchant_more_retail@okaxis amt=9307.89 status=TIMEOUT payer_vpa=customer5572@ybl gstin=07UIAIL8489L1ZM
+1780363553981 txn_id=UPI2026060215387661458 method=UPI_COLLECT vpa=merchant_bigbasket@okhdfcbank amt=8776.88 status=PENDING payer_mobile=9554247400 payer_vpa=customer7664@okaxis gstin=33UHRRZ2319A1ZM
+2026-06-02T10:17:14+05:30 txn_id=UPI2026060229118966099 method=UPI_COLLECT vpa=merchant_medplus@okicici amt=6011.48 status=SUCCESS rrn=114814285086 payer_vpa=customer4791@okaxis gstin=19WJOMX9792Z1ZM
+2026-06-01T19:35:12+05:30 txn_id=UPI2026060236718272746 method=UPI_MANDATE vpa=merchant_local_kirana@ibl amt=5634.17 status=REVERSED rrn=513167216098 payer_vpa=customer1484@okicici gstin=19TWALM6377P1ZM
+1780341825981 txn_id=UPI2026060262889745389 method=UPI_INTENT vpa=merchant_chai_point@okhdfcbank amt=974.08 status=SUCCESS payer_mobile=9037250231 payer_vpa=customer2707@ibl gstin=27PGWKV9768X1ZM
+2026-06-02T12:25:01+05:30 txn_id=UPI2026060293316522707 method=UPI_COLLECT vpa=merchant_local_kirana@paytm amt=9424.29 status=SUCCESS rrn=203100315206 payer_vpa=customer9701@oksbi gstin=33KFPRX7315S1ZM
+1780377517981 txn_id=UPI2026060255567755727 method=UPI_INTENT vpa=merchant_chai_point@okhdfcbank amt=1821.78 status=SUCCESS rrn=056726793119 payer_mobile=9656729042 payer_vpa=customer3122@okicici gstin=27THSRM2266Y1ZM
+2026-06-02T00:24:38+05:30 txn_id=UPI2026060267083423699 method=UPI_COLLECT vpa=merchant_bigbasket@okhdfcbank amt=4686.75 status=TIMEOUT rrn=103650446702 payer_vpa=customer2285@paytm gstin=27FGMXS1830P1ZM
+2026-06-02T13:04:22+05:30 txn_id=UPI2026060212881159180 method=UPI_QR vpa=merchant_medplus@okicici amt=2777.14 status=TIMEOUT rrn=471949352633 payer_vpa=customer3169@okaxis gstin=33MMWZE4545A1ZM
+2026-06-01T19:42:37+05:30 txn_id=UPI2026060220885042210 method=UPI_MANDATE vpa=merchant_reliance_fresh@paytm amt=9311.92 status=SUCCESS rrn=337725422002 payer_vpa=customer7938@paytm gstin=24ITAIW0147Z1ZM
+1780333874981 txn_id=UPI2026060289516196457 method=UPI_COLLECT vpa=merchant_more_retail@okaxis amt=2253.33 status=SUCCESS rrn=042873785147 payer_vpa=customer3587@okicici gstin=29YGREH2317A1ZM
+1780384982981 txn_id=UPI2026060223670336410 method=UPI_MANDATE vpa=merchant_bigbasket@okhdfcbank amt=9774.75 status=SUCCESS rrn=457819597224 payer_vpa=customer2031@paytm gstin=07QVQPN2342Z1ZM
+1780369536982 txn_id=UPI2026060282174449463 method=UPI_INTENT vpa=merchant_bigbasket@oksbi amt=973.95 status=SUCCESS rrn=916578490160 payer_vpa=customer1525@oksbi gstin=29AJANW5123T1ZM
+1780326312982 txn_id=UPI2026060222375096266 method=UPI_MANDATE vpa=merchant_local_kirana@okicici amt=7698.9 status=FAILED rrn=712085484829 payer_vpa=customer0588@ibl gstin=19FKXOG5746P1ZM
+1780329597982 txn_id=UPI2026060244716245290 method=UPI_INTENT vpa=merchant_chai_point@okhdfcbank amt=2397.89 status=SUCCESS rrn=532285708150 payer_vpa=customer2202@okhdfcbank gstin=27YAGXJ1359O1ZM
+1780349569982 txn_id=UPI2026060229971897146 method=UPI_COLLECT vpa=merchant_swiggy@ibl amt=8592.64 status=FAILED rrn=282695561454 payer_vpa=customer2639@ibl gstin=29WBSTL9778A1ZM
+2026-06-01T14:32:07+05:30 txn_id=UPI2026060221298741534 method=UPI_INTENT vpa=merchant_bigbasket@okaxis amt=7579.34 status=FAILED rrn=312588987382 payer_vpa=customer4541@okaxis gstin=07XXEFQ7476T1ZM
+2026-06-02T13:32:18+05:30 txn_id=UPI2026060214083416519 method=UPI_QR vpa=merchant_more_retail@ibl amt=5245.01 status=SUCCESS payer_vpa=customer4405@ybl gstin=19LMVDF9158N1ZM
+2026-06-02T00:54:46+05:30 txn_id=UPI2026060286901990545 method=UPI_MANDATE vpa=merchant_medplus@ybl amt=3562.65 status=SUCCESS payer_vpa=customer3589@okicici gstin=24JYHGF7699M1ZM
+1780369295982 txn_id=UPI2026060298652602371 method=UPI_QR vpa=merchant_reliance_fresh@ybl amt=8398.01 status=SUCCESS rrn=443906296557 payer_vpa=customer4425@okaxis gstin=24MWIXU2457K1ZM
+1780317805982 txn_id=UPI2026060259429880800 method=UPI_INTENT vpa=merchant_medplus@paytm amt=4621.77 status=SUCCESS rrn=761834351118 payer_vpa=customer9674@okaxis gstin=33AKKQM9509N1ZM
+1780330866982 txn_id=UPI2026060241134324644 method=UPI_QR vpa=merchant_local_kirana@oksbi amt=2358.18 status=REVERSED rrn=583346656124 payer_vpa=customer1685@oksbi gstin=19FDIPY5870R1ZM
+2026-06-02T03:41:54+05:30 txn_id=UPI2026060285582002934 method=UPI_MANDATE vpa=merchant_local_kirana@paytm amt=6646.98 status=SUCCESS payer_vpa=customer2753@ibl gstin=24EDVYW5393B1ZM
+2026-06-01T18:26:09+05:30 txn_id=UPI2026060273635090090 method=UPI_COLLECT vpa=merchant_chai_point@oksbi amt=2815.33 status=SUCCESS rrn=337111126472 payer_vpa=customer7830@ybl gstin=24DIVJZ8206P1ZM
+2026-06-02T06:55:23+05:30 txn_id=UPI2026060214402878688 method=UPI_QR vpa=merchant_swiggy@paytm amt=6148.34 status=FAILED rrn=838162507432 payer_vpa=customer9898@ybl gstin=19BJEFV7549R1ZM
+2026-06-02T07:36:51+05:30 txn_id=UPI2026060204559936406 method=UPI_COLLECT vpa=merchant_medplus@okicici amt=7272.14 status=SUCCESS rrn=460464440795 payer_vpa=customer9875@ybl gstin=19TKADX4667T1ZM
+1780342225982 txn_id=UPI2026060291804808145 method=UPI_MANDATE vpa=merchant_chai_point@ybl amt=9251.51 status=SUCCESS rrn=044314996816 payer_vpa=customer5193@okicici gstin=27MFSVZ3740J1ZM
+1780381745982 txn_id=UPI2026060250032298601 method=UPI_COLLECT vpa=merchant_chai_point@oksbi amt=3018.05 status=SUCCESS rrn=142484769680 payer_mobile=9500682808 payer_vpa=customer1023@okaxis gstin=24NMGXI2190H1ZM
+2026-06-02T08:44:56+05:30 txn_id=UPI2026060211193482937 method=UPI_MANDATE vpa=merchant_more_retail@ybl amt=2333.41 status=SUCCESS rrn=604469886316 payer_vpa=customer1397@okhdfcbank gstin=29VULGL7843S1ZM
+2026-06-02T03:46:35+05:30 txn_id=UPI2026060208366472880 method=UPI_MANDATE vpa=merchant_swiggy@paytm amt=6493.68 status=FAILED payer_mobile=9201558197 payer_vpa=customer8229@okhdfcbank gstin=27HVNGC4221S1ZM
+1780326373982 txn_id=UPI2026060257025403760 method=UPI_MANDATE vpa=merchant_chai_point@oksbi amt=4449.91 status=SUCCESS rrn=232749450939 payer_vpa=customer6490@okhdfcbank gstin=24APUNR4715E1ZM
+2026-06-01T17:18:54+05:30 txn_id=UPI2026060250321977852 method=UPI_MANDATE vpa=merchant_swiggy@paytm amt=8145.02 status=PENDING rrn=155484976139 payer_vpa=customer6668@okaxis gstin=19UPPEM6476V1ZM
+1780361289982 txn_id=UPI2026060249948952570 method=UPI_COLLECT vpa=merchant_swiggy@okicici amt=1958.57 status=FAILED rrn=032897653323 payer_vpa=customer6238@okicici gstin=19SRKFN6923M1ZM
+1780366786982 txn_id=UPI2026060233487173172 method=UPI_MANDATE vpa=merchant_bigbasket@okicici amt=8723.04 status=SUCCESS rrn=598119241182 payer_mobile=9972269081 payer_vpa=customer5347@okaxis gstin=24NBEWW2845L1ZM
+1780324971982 txn_id=UPI2026060252812087219 method=UPI_QR vpa=merchant_swiggy@ibl amt=4929.84 status=SUCCESS rrn=366364307547 payer_vpa=customer2176@ybl gstin=07HJRYD3672L1ZM
+2026-06-01T10:00:00+05:30 txn_id=UPI20260601 status=
+1780317533982 txn_id=UPI2026060252168171163 method=UPI_COLLECT vpa=merchant_reliance_fresh@ybl amt=7226.75 status=SUCCESS rrn=510414080806 payer_vpa=customer7333@okaxis gstin=29NNYAW7135X1ZM
+1780307153982 txn_id=UPI2026060216463837934 method=UPI_COLLECT vpa=merchant_reliance_fresh@paytm amt=7160.62 status=FAILED rrn=244840520056 payer_vpa=customer3505@ybl gstin=27SOEQN1486H1ZM
+1780387662982 amt=500.00 PARTIAL_RECORD
+2026-06-01T20:16:04+05:30 txn_id=UPI2026060226523707949 method=UPI_QR vpa=merchant_medplus@okicici amt=632.75 status=REVERSED rrn=964026941240 payer_vpa=customer8534@okicici gstin=33OARYT6418P1ZM
+2026-06-02T01:15:42+05:30 txn_id=UPI2026060296020938256 method=UPI_MANDATE vpa=merchant_bigbasket@oksbi amt=8814.57 status=FAILED rrn=419089909883 payer_mobile=9977938664 payer_vpa=customer2491@ibl gstin=24SNYGM2437E1ZM
+2026-06-02T07:19:34+05:30 txn_id=UPI2026060268667361630 method=UPI_MANDATE vpa=merchant_local_kirana@okaxis amt=9490.03 status=SUCCESS rrn=413235113349 payer_vpa=customer0798@okaxis gstin=24TKWAT1337Y1ZM
+### gateway restart marker ###
+2026-06-02T05:58:31+05:30 txn_id=UPI2026060223141668066 method=UPI_COLLECT vpa=merchant_bigbasket@okicici amt=7384.24 status=SUCCESS rrn=909931738361 payer_vpa=customer9056@ibl gstin=19BGELC5442M1ZM
+1780321500982 txn_id=UPI2026060273596987017 method=UPI_COLLECT vpa=merchant_medplus@paytm amt=3365.98 status=SUCCESS rrn=599254659079 payer_vpa=customer3986@paytm gstin=27NOFTL6373G1ZM
+2026-06-01T19:08:34+05:30 txn_id=UPI2026060230364858550 method=UPI_QR vpa=merchant_bigbasket@okaxis amt=6901.0 status=TIMEOUT rrn=709764112367 payer_vpa=customer6471@paytm gstin=29GRJOA8742E1ZM
+2026-06-02T09:57:27+05:30 txn_id=UPI2026060258157790090 method=UPI_QR vpa=merchant_chai_point@okaxis amt=9940.51 status=REVERSED rrn=080395716127 payer_vpa=customer6927@okicici gstin=19PBGDU3563J1ZM
+1780383334982 txn_id=UPI2026060287645099168 method=UPI_INTENT vpa=merchant_reliance_fresh@okicici amt=1503.96 status=REVERSED rrn=185850370563 payer_vpa=customer8243@oksbi gstin=29TZAMI6196F1ZM
+1780321823982 txn_id=UPI2026060289652098532 method=UPI_INTENT vpa=merchant_more_retail@paytm amt=5153.72 status=REVERSED payer_vpa=customer2974@okicici gstin=33AHHIZ0397C1ZM
+2026-06-02T09:06:51+05:30 txn_id=UPI2026060262568497597 method=UPI_INTENT vpa=merchant_chai_point@ibl amt=5755.38 status=SUCCESS rrn=803028126677 payer_vpa=customer5607@okicici gstin=07VAUWL3257Q1ZM
+1780315313982 txn_id=UPI2026060209600150018 method=UPI_MANDATE vpa=merchant_more_retail@okhdfcbank amt=740.14 status=SUCCESS rrn=160670135318 payer_vpa=customer5551@okicici gstin=07XIUDE7497H1ZM
+1780306657982 txn_id=UPI2026060249836686260 method=UPI_COLLECT vpa=merchant_local_kirana@okicici amt=1917.27 status=REVERSED rrn=675342619925 payer_vpa=customer3558@okicici gstin=29JERGQ6228D1ZM
+2026-06-01T18:49:33+05:30 txn_id=UPI2026060209338602580 method=UPI_COLLECT vpa=merchant_bigbasket@okhdfcbank amt=5560.74 status=SUCCESS rrn=848871889778 payer_vpa=customer4927@okaxis gstin=27MZGTF5164R1ZM
+1780360445982 txn_id=UPI2026060240442769572 method=UPI_INTENT vpa=merchant_swiggy@ybl amt=1837.8 status=SUCCESS rrn=933400660206 payer_vpa=customer8314@oksbi gstin=29SWMXC7867R1ZM
+1780308166983 txn_id=UPI2026060236536308441 method=UPI_MANDATE vpa=merchant_chai_point@oksbi amt=2816.75 status=SUCCESS payer_mobile=9281570580 payer_vpa=customer3877@okaxis gstin=27ZGKXH5001X1ZM
+2026-06-01T15:39:09+05:30 txn_id=UPI2026060215873432999 method=UPI_INTENT vpa=merchant_chai_point@oksbi amt=4578.84 status=SUCCESS rrn=270941347353 payer_mobile=9419681223 payer_vpa=customer7176@paytm gstin=27BZJDY1519M1ZM
+1780309023983 txn_id=UPI2026060227779532497 method=UPI_MANDATE vpa=merchant_more_retail@ybl amt=4400.8 status=TIMEOUT rrn=181381863677 payer_vpa=customer0897@okicici gstin=29IUURI0713Y1ZM
+1780376541983 txn_id=UPI2026060208523749303 method=UPI_COLLECT vpa=merchant_bigbasket@paytm amt=6788.01 status=SUCCESS rrn=786049838044 payer_vpa=customer0575@paytm gstin=07BSRMT2070N1ZM
+1780345339983 txn_id=UPI2026060216825949056 method=UPI_INTENT vpa=merchant_bigbasket@okicici amt=8311.22 status=FAILED rrn=917644820498 payer_vpa=customer6479@paytm gstin=19UINDW5612F1ZM
+2026-06-01T18:50:08+05:30 txn_id=UPI2026060212763620071 method=UPI_QR vpa=merchant_swiggy@paytm amt=6054.93 status=SUCCESS payer_vpa=customer8284@okicici gstin=27NZRMS2929X1ZM
+1780325080983 txn_id=UPI2026060208154427580 method=UPI_MANDATE vpa=merchant_more_retail@okaxis amt=992.14 status=SUCCESS rrn=501065671222 payer_vpa=customer1306@ibl gstin=33MDHVO3513C1ZM
+1780340350983 txn_id=UPI2026060204374330742 method=UPI_QR vpa=merchant_reliance_fresh@okicici amt=9709.92 status=SUCCESS payer_mobile=9831637199 payer_vpa=customer5108@oksbi gstin=27ABEQS9517R1ZM
+2026-06-02T06:45:07+05:30 txn_id=UPI2026060295267581138 method=UPI_QR vpa=merchant_bigbasket@ibl amt=3591.49 status=SUCCESS rrn=871987464398 payer_vpa=customer0496@okhdfcbank gstin=33HCLJP7443E1ZM
+2026-06-01T22:32:17+05:30 txn_id=UPI2026060261264740875 method=UPI_QR vpa=merchant_chai_point@ybl amt=173.08 status=TIMEOUT rrn=240813304013 payer_vpa=customer6724@okhdfcbank gstin=27ALXDL3696H1ZM
+2026-06-01T13:55:27+05:30 txn_id=UPI2026060297641993628 method=UPI_QR vpa=merchant_medplus@ybl amt=9460.62 status=TIMEOUT rrn=427023338679 payer_vpa=customer2102@paytm gstin=19QGVZF9709F1ZM

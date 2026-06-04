@@ -1,0 +1,49 @@
+# macOS / editor noise
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/tasks.json
+!.vscode/extensions.json
+
+# Secrets and local environment
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+build/
+dist/
+
+# Node / dashboard
+node_modules/
+ui/**/node_modules/
+ui/**/dist/
+ui/**/.vite/
+*.tsbuildinfo
+
+# Splunk / AppInspect generated output
+result.json
+appinspect_result*.json
+*appinspect*result*.json
+
+# Demo artifacts generated locally. Commit curated replay fixtures explicitly.
+demo/recorded_events.local.json
+demo/*.local.json
+demo/*.mp4
+demo/*.mov
+
+# Logs and temporary runtime files
+*.log
+!fixtures/**/*.log
+tmp/
+temp/
