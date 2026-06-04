@@ -32,6 +32,7 @@ TABLE_FIELDS = (
     "txn_id",
     "method",
     "vpa",
+    "dest",
     "amt",
     "amount",
     "status",
