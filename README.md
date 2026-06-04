@@ -80,6 +80,21 @@ The current AppInspect fixture is designed to fire three deterministic failures:
 - `check_user_seed_conf_deny_list`: forbidden `default/user-seed.conf`.
 - `check_if_outputs_conf_exists`: forwarding enabled in `default/outputs.conf`.
 
+Run the self-heal loop:
+
+```bash
+copilot appinspect fixtures/appinspect/broken_app --out runs/appinspect-demo
+```
+
+The command copies the fixture into `runs/appinspect-demo/work/broken_app`,
+patches only that working copy, and writes:
+
+- `runs/appinspect-demo/appinspect/iteration-XX.json`
+- `runs/appinspect-demo/events.jsonl`
+- `runs/appinspect-demo/events.json`
+- `runs/appinspect-demo/provenance.jsonl`
+- `runs/appinspect-demo/summary.json`
+
 Validate it directly:
 
 ```bash

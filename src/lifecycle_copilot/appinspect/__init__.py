@@ -1,0 +1,1 @@
+"""AppInspect loop adapters."""
