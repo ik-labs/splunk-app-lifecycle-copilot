@@ -1,12 +1,14 @@
 import {
   Activity,
   AlertCircle,
+  ArrowRight,
   Check,
   CheckCircle2,
   FileJson,
   FolderOpen,
   Gauge,
   Info,
+  Layers,
   Network,
   Pause,
   Play,
@@ -19,13 +21,21 @@ import {
 } from "lucide-react";
 import { ChangeEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
-import { DEFAULT_STAGE, STAGE_ORDER, STAGES, type StageArtifact } from "./data/demo";
+import {
+  DEFAULT_STAGE,
+  STAGE_ORDER,
+  STAGES,
+  type StageArtifact,
+  type StageDataset
+} from "./data/demo";
 import {
   EVENT_SPACING_MS,
   deriveReplayState,
   formatReplayTime,
   getActiveIndex,
-  getTotalDuration
+  getTotalDuration,
+  summarizeStage,
+  type StageSummary
 } from "./lib/replay";
 import type {
   FailureReplayState,
@@ -38,7 +48,10 @@ import type {
 
 const speeds = [0.5, 1, 1.5, 2];
 
+type View = "overview" | LoopName;
+
 export default function App() {
+  const [view, setView] = useState<View>("overview");
   const [stage, setStage] = useState<LoopName>(DEFAULT_STAGE);
   const [uploadedEvents, setUploadedEvents] = useState<ReplayEvent[] | null>(null);
   const [elapsedMs, setElapsedMs] = useState(() => getTotalDuration(STAGES[DEFAULT_STAGE].events));
@@ -114,14 +127,21 @@ export default function App() {
   };
 
   const handleSelectStage = (next: LoopName) => {
-    if (next === stage && !uploadedEvents) {
+    if (view === next && !uploadedEvents) {
       return;
     }
+    setView(next);
     setStage(next);
     setUploadedEvents(null);
     setElapsedMs(getTotalDuration(STAGES[next].events));
     setPlaying(false);
     setSelectedFailureId(null);
+  };
+
+  const handleSelectOverview = () => {
+    setView("overview");
+    setUploadedEvents(null);
+    setPlaying(false);
   };
 
   const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {
@@ -135,6 +155,7 @@ export default function App() {
         throw new Error("Expected an array of replay events.");
       }
       setUploadedEvents(parsed);
+      setView(stage);
       setElapsedMs(getTotalDuration(parsed));
       setPlaying(false);
       setSelectedFailureId(null);
@@ -145,9 +166,38 @@ export default function App() {
     }
   };
 
+  const stageSummaries = useMemo(
+    () =>
+      STAGE_ORDER.map((loop) => ({
+        loop,
+        stage: STAGES[loop],
+        summary: summarizeStage(STAGES[loop].events)
+      })),
+    []
+  );
+
+  if (view === "overview") {
+    return (
+      <div className="app-shell">
+        <Sidebar
+          activeStage={null}
+          activeView="overview"
+          onSelectOverview={handleSelectOverview}
+          onSelectStage={handleSelectStage}
+        />
+        <LifecycleOverview summaries={stageSummaries} onOpen={handleSelectStage} />
+      </div>
+    );
+  }
+
   return (
     <div className="app-shell">
-      <Sidebar activeStage={uploadedEvents ? null : stage} onSelectStage={handleSelectStage} />
+      <Sidebar
+        activeStage={uploadedEvents ? null : stage}
+        activeView={uploadedEvents ? null : view}
+        onSelectOverview={handleSelectOverview}
+        onSelectStage={handleSelectStage}
+      />
       <main className="workspace">
         <TopBar
           activeIndex={activeIndex}
@@ -227,10 +277,12 @@ export default function App() {
 
 interface SidebarProps {
   activeStage: LoopName | null;
+  activeView: View | null;
+  onSelectOverview: () => void;
   onSelectStage: (stage: LoopName) => void;
 }
 
-function Sidebar({ activeStage, onSelectStage }: SidebarProps) {
+function Sidebar({ activeStage, activeView, onSelectOverview, onSelectStage }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -242,6 +294,21 @@ function Sidebar({ activeStage, onSelectStage }: SidebarProps) {
       </div>
 
       <nav className="stage-nav" aria-label="Lifecycle stages">
+        <button
+          className={`stage-item ${activeView === "overview" ? "active" : ""}`}
+          type="button"
+          onClick={onSelectOverview}
+          aria-pressed={activeView === "overview"}
+        >
+          <span className="stage-index">
+            <Layers size={14} />
+          </span>
+          <span>
+            <strong>Lifecycle</strong>
+            <small>{activeView === "overview" ? "Overview" : "Both loops"}</small>
+          </span>
+          <Gauge size={18} />
+        </button>
         {STAGE_ORDER.map((loop) => {
           const stageData = STAGES[loop];
           const isActive = loop === activeStage;
@@ -269,6 +336,110 @@ function Sidebar({ activeStage, onSelectStage }: SidebarProps) {
         <span>Committed demo events — no live Splunk required</span>
       </div>
     </aside>
+  );
+}
+
+interface StageSummaryEntry {
+  loop: LoopName;
+  stage: StageDataset;
+  summary: StageSummary;
+}
+
+function LifecycleOverview({
+  summaries,
+  onOpen
+}: {
+  summaries: StageSummaryEntry[];
+  onOpen: (loop: LoopName) => void;
+}) {
+  const totalMcp = summaries.reduce((total, entry) => total + entry.summary.mcpCalls, 0);
+  const totalHealed = summaries.reduce((total, entry) => total + entry.summary.healed, 0);
+
+  return (
+    <main className="workspace overview">
+      <header className="overview-header">
+        <div>
+          <h1>Lifecycle Overview</h1>
+          <p>One self-heal engine, two loops — raw logs to AppInspect-green, validated and remembered.</p>
+        </div>
+        <div className="overview-aggregate">
+          <span>
+            <strong>{summaries.length}</strong> loops
+          </span>
+          <span>
+            <strong>{totalHealed}</strong> healed
+          </span>
+          <span>
+            <strong>{totalMcp}</strong> MCP calls
+          </span>
+        </div>
+      </header>
+
+      <section className="overview-grid">
+        {summaries.map((entry) => (
+          <StageSummaryCard entry={entry} key={entry.loop} onOpen={() => onOpen(entry.loop)} />
+        ))}
+      </section>
+
+      <footer className="overview-footer">
+        <Workflow size={16} />
+        <span>
+          The same deterministic self-heal engine drove both loops; every fix is recorded in the
+          provenance ledger.
+        </span>
+      </footer>
+    </main>
+  );
+}
+
+function StageSummaryCard({ entry, onOpen }: { entry: StageSummaryEntry; onOpen: () => void }) {
+  const { loop, stage, summary } = entry;
+  const isClean = summary.runStatus === "clean";
+  const extra =
+    loop === "onboarding"
+      ? `${summary.fieldMappings} CIM mapped · ${summary.piiFlags} PII flagged`
+      : `${summary.healed} deterministic patches applied`;
+
+  return (
+    <article className="summary-card">
+      <header className="summary-card-head">
+        <span className="stage-index">{stage.index}</span>
+        <div className="summary-card-title">
+          <strong>{stage.label}</strong>
+          <small>{stage.tagline}</small>
+        </div>
+        {loop === "onboarding" ? <Network size={20} /> : <Activity size={20} />}
+      </header>
+
+      <div className={`summary-status ${summary.runStatus}`}>
+        <span className="status-dot" />
+        {isClean ? "Clean" : summary.runStatus}
+      </div>
+
+      <div className="summary-metrics">
+        <div>
+          <span>Failures</span>
+          <strong>
+            {summary.initialFailures} → {summary.finalFailures}
+          </strong>
+        </div>
+        <div>
+          <span>Iterations</span>
+          <strong>{summary.iterations}</strong>
+        </div>
+        <div>
+          <span>MCP calls</span>
+          <strong>{summary.mcpCalls}</strong>
+        </div>
+      </div>
+
+      <p className="summary-extra">{extra}</p>
+
+      <button className="summary-open" type="button" onClick={onOpen}>
+        Open replay
+        <ArrowRight size={16} />
+      </button>
+    </article>
   );
 }
 

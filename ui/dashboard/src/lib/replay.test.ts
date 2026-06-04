@@ -1,7 +1,8 @@
 import { describe, expect, it } from "vitest";
 
+import appinspectEvents from "../../../../demo/appinspect_events.json";
 import onboardingEvents from "../../../../demo/onboarding_events.json";
-import { deriveReplayState } from "./replay";
+import { deriveReplayState, summarizeStage } from "./replay";
 import type { ReplayEvent } from "../types";
 
 const events: ReplayEvent[] = [
@@ -158,5 +159,34 @@ describe("deriveReplayState (onboarding)", () => {
     expect(state.fieldMappings).toContainEqual({ raw: "vpa", cim: "dest" });
     expect(state.piiFlags).toEqual(["payer_vpa", "payer_mobile"]);
     expect(state.metrics.mcpCalls).toBeGreaterThan(0);
+  });
+});
+
+describe("summarizeStage", () => {
+  it("summarizes the onboarding loop for the lifecycle overview", () => {
+    const summary = summarizeStage(onboardingEvents as ReplayEvent[]);
+    expect(summary).toMatchObject({
+      runStatus: "clean",
+      initialFailures: 3,
+      finalFailures: 0,
+      healed: 3,
+      iterations: 1,
+      fieldMappings: 6,
+      piiFlags: 2
+    });
+    expect(summary.mcpCalls).toBeGreaterThan(0);
+  });
+
+  it("summarizes the AppInspect loop for the lifecycle overview", () => {
+    const summary = summarizeStage(appinspectEvents as ReplayEvent[]);
+    expect(summary).toMatchObject({
+      runStatus: "clean",
+      initialFailures: 3,
+      finalFailures: 0,
+      healed: 3,
+      mcpCalls: 0,
+      fieldMappings: 0,
+      piiFlags: 0
+    });
   });
 });

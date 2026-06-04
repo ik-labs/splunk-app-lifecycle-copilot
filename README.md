@@ -148,11 +148,14 @@ two PII flag events are written for dashboard replay.
 
 ## Dashboard Replay Mode
 
-The dashboard replays both self-heal loops. Use the sidebar to switch between
-the **Onboarding** and **AppInspect** stages; each renders committed demo
-events (`demo/onboarding_events.json`, `demo/appinspect_events.json`) and
-requires no Splunk, MCP, or live WebSocket. The onboarding stage adds an MCP
-tool-call count and a CIM-mapping / PII panel sourced from a verified live run.
+The dashboard replays both self-heal loops. It opens on a **Lifecycle**
+overview that summarizes both loops side by side (status, failures healed,
+iterations, MCP calls) to make the one-engine/two-loops thesis legible at a
+glance. From there, use the sidebar to open the **Onboarding** or
+**AppInspect** stage; each renders committed demo events
+(`demo/onboarding_events.json`, `demo/appinspect_events.json`) and requires no
+Splunk, MCP, or live WebSocket. The onboarding stage adds an MCP tool-call
+count and a CIM-mapping / PII panel sourced from a verified live run.
 
 ```bash
 cd ui/dashboard

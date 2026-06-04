@@ -72,6 +72,33 @@ export function parseProvenance(raw: string): ProvenanceEntry[] {
   return parseJsonl<ProvenanceEntry>(raw);
 }
 
+export interface StageSummary {
+  runStatus: ReplayViewState["runStatus"];
+  initialFailures: number;
+  finalFailures: number;
+  healed: number;
+  iterations: number;
+  mcpCalls: number;
+  fieldMappings: number;
+  piiFlags: number;
+}
+
+/** Collapse a full event stream into the final-state numbers shown in the
+ * lifecycle overview. */
+export function summarizeStage(events: ReplayEvent[]): StageSummary {
+  const state = deriveReplayState(events, events.length - 1);
+  return {
+    runStatus: state.runStatus,
+    initialFailures: state.metrics.initialFailures,
+    finalFailures: state.metrics.finalFailures,
+    healed: state.metrics.healed,
+    iterations: state.metrics.iterations,
+    mcpCalls: state.metrics.mcpCalls,
+    fieldMappings: state.fieldMappings.length,
+    piiFlags: state.piiFlags.length
+  };
+}
+
 function deriveMetrics(
   initialFailureIds: string[],
   failures: FailureReplayState[],
