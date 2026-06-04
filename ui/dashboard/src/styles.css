@@ -279,7 +279,7 @@ select {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
   gap: 16px;
   padding: 16px 24px 0;
 }
@@ -599,6 +599,55 @@ code {
 .artifacts-panel,
 .event-panel {
   min-height: 226px;
+}
+
+.event-panel--wide {
+  grid-column: 1 / -1;
+}
+
+.cim-panel {
+  min-height: 226px;
+}
+
+.cim-list {
+  display: grid;
+  padding: 8px 0;
+}
+
+.cim-row {
+  display: grid;
+  grid-template-columns: minmax(0, auto) 16px minmax(0, auto) minmax(48px, max-content);
+  gap: 10px;
+  align-items: center;
+  min-height: 32px;
+  border-bottom: 1px solid #edf1f3;
+  padding: 4px 16px;
+}
+
+.cim-row:last-child {
+  border-bottom: 0;
+}
+
+.cim-arrow {
+  color: #18933a;
+  font-weight: 800;
+}
+
+.cim-spacer {
+  display: inline-block;
+}
+
+.pii-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  justify-self: end;
+  border-radius: 999px;
+  background: #fdeccf;
+  color: #9a5a00;
+  padding: 2px 8px;
+  font-size: 11px;
+  font-weight: 750;
 }
 
 .artifact-table {

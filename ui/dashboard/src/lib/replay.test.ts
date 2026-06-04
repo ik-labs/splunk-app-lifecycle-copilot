@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 
+import onboardingEvents from "../../../../demo/onboarding_events.json";
 import { deriveReplayState } from "./replay";
 import type { ReplayEvent } from "../types";
 
@@ -126,5 +127,36 @@ describe("deriveReplayState", () => {
     const state = deriveReplayState(events, 4);
     expect(state.activeEvent?.type).toBe("unknown_future_event");
     expect(state.visibleEvents).toHaveLength(5);
+  });
+});
+
+describe("deriveReplayState (onboarding)", () => {
+  const onboarding = onboardingEvents as ReplayEvent[];
+
+  it("finds the three initial gaps despite leading mcp_tool_call events", () => {
+    const state = deriveReplayState(onboarding, onboarding.length - 1);
+    expect(state.metrics.initialFailures).toBe(3);
+    expect(state.failures.map((failure) => failure.check)).toEqual([
+      "timestamp_coverage_gap",
+      "cim_mapping_gap",
+      "pii_flag_gap"
+    ]);
+  });
+
+  it("heals every gap from one candidate swap when the run completes clean", () => {
+    const state = deriveReplayState(onboarding, onboarding.length - 1);
+    expect(state.runStatus).toBe("clean");
+    expect(state.metrics.healed).toBe(3);
+    expect(state.metrics.finalFailures).toBe(0);
+    expect(state.metrics.iterations).toBe(1);
+    expect(state.failures.every((failure) => failure.revalidated === "pass")).toBe(true);
+  });
+
+  it("collects CIM mappings, PII flags, and counts MCP tool calls", () => {
+    const state = deriveReplayState(onboarding, onboarding.length - 1);
+    expect(state.fieldMappings).toHaveLength(6);
+    expect(state.fieldMappings).toContainEqual({ raw: "vpa", cim: "dest" });
+    expect(state.piiFlags).toEqual(["payer_vpa", "payer_mobile"]);
+    expect(state.metrics.mcpCalls).toBeGreaterThan(0);
   });
 });

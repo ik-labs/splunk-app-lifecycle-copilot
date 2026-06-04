@@ -3,21 +3,23 @@ import {
   AlertCircle,
   Check,
   CheckCircle2,
-  Circle,
   FileJson,
   FolderOpen,
   Gauge,
   Info,
+  Network,
   Pause,
   Play,
   RotateCcw,
+  ShieldAlert,
   ShieldCheck,
   SkipBack,
-  Upload
+  Upload,
+  Workflow
 } from "lucide-react";
 import { ChangeEvent, ReactNode, useEffect, useMemo, useRef, useState } from "react";
 
-import { artifactRows, initialEvents, initialProvenance } from "./data/demo";
+import { DEFAULT_STAGE, STAGE_ORDER, STAGES, type StageArtifact } from "./data/demo";
 import {
   EVENT_SPACING_MS,
   deriveReplayState,
@@ -25,18 +27,34 @@ import {
   getActiveIndex,
   getTotalDuration
 } from "./lib/replay";
-import type { FailureReplayState, ProvenanceEntry, ReplayEvent, ReplayViewState } from "./types";
+import type {
+  FailureReplayState,
+  FieldMapping,
+  LoopName,
+  ProvenanceEntry,
+  ReplayEvent,
+  ReplayViewState
+} from "./types";
 
 const speeds = [0.5, 1, 1.5, 2];
 
 export default function App() {
-  const [events, setEvents] = useState<ReplayEvent[]>(initialEvents);
-  const [provenance, setProvenance] = useState<ProvenanceEntry[]>(initialProvenance);
-  const [elapsedMs, setElapsedMs] = useState(() => getTotalDuration(initialEvents));
+  const [stage, setStage] = useState<LoopName>(DEFAULT_STAGE);
+  const [uploadedEvents, setUploadedEvents] = useState<ReplayEvent[] | null>(null);
+  const [elapsedMs, setElapsedMs] = useState(() => getTotalDuration(STAGES[DEFAULT_STAGE].events));
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [selectedFailureId, setSelectedFailureId] = useState<string | null>(null);
   const lastTickRef = useRef<number | null>(null);
+
+  const dataset = STAGES[stage];
+  const events = uploadedEvents ?? dataset.events;
+  const provenance = uploadedEvents ? [] : dataset.provenance;
+  const artifacts = dataset.artifacts;
+  const hasFieldEvents = useMemo(
+    () => events.some((event) => event.type === "field_extracted"),
+    [events]
+  );
 
   const totalDuration = useMemo(() => getTotalDuration(events), [events]);
   const activeIndex = getActiveIndex(events, elapsedMs);
@@ -95,19 +113,29 @@ export default function App() {
     setElapsedMs(Number(value) * EVENT_SPACING_MS);
   };
 
+  const handleSelectStage = (next: LoopName) => {
+    if (next === stage && !uploadedEvents) {
+      return;
+    }
+    setStage(next);
+    setUploadedEvents(null);
+    setElapsedMs(getTotalDuration(STAGES[next].events));
+    setPlaying(false);
+    setSelectedFailureId(null);
+  };
+
   const handleUpload = async (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) {
       return;
     }
     try {
-      const uploadedEvents = JSON.parse(await file.text()) as ReplayEvent[];
-      if (!Array.isArray(uploadedEvents)) {
+      const parsed = JSON.parse(await file.text()) as ReplayEvent[];
+      if (!Array.isArray(parsed)) {
         throw new Error("Expected an array of replay events.");
       }
-      setEvents(uploadedEvents);
-      setProvenance([]);
-      setElapsedMs(getTotalDuration(uploadedEvents));
+      setUploadedEvents(parsed);
+      setElapsedMs(getTotalDuration(parsed));
       setPlaying(false);
       setSelectedFailureId(null);
     } catch (error) {
@@ -119,7 +147,7 @@ export default function App() {
 
   return (
     <div className="app-shell">
-      <Sidebar />
+      <Sidebar activeStage={uploadedEvents ? null : stage} onSelectStage={handleSelectStage} />
       <main className="workspace">
         <TopBar
           activeIndex={activeIndex}
@@ -132,6 +160,7 @@ export default function App() {
           playing={playing}
           replayState={replayState}
           speed={speed}
+          tagline={uploadedEvents ? "Uploaded replay" : dataset.tagline}
           totalDuration={totalDuration}
           setSpeed={setSpeed}
         />
@@ -161,6 +190,12 @@ export default function App() {
             tone="success"
             value={replayState.metrics.finalFailures}
           />
+          <MetricCard
+            icon={<Network />}
+            label="MCP tool calls"
+            tone="info"
+            value={replayState.metrics.mcpCalls}
+          />
         </section>
 
         <section className="content-grid">
@@ -168,13 +203,21 @@ export default function App() {
             activeFailureId={selectedFailure?.failureId ?? replayState.activeFailureId}
             failures={replayState.failures}
             onSelect={setSelectedFailureId}
+            subtitle={dataset.tagline}
           />
           <LedgerPanel ledgerEntries={replayState.ledgerEntries} provenance={provenance} />
-          <ArtifactsPanel />
+          {hasFieldEvents ? (
+            <CimMappingPanel
+              fieldMappings={replayState.fieldMappings}
+              piiFlags={replayState.piiFlags}
+            />
+          ) : null}
+          <ArtifactsPanel artifacts={artifacts} label={dataset.artifactsLabel} />
           <EventStreamPanel
             activeEvent={replayState.activeEvent}
             events={replayState.visibleEvents}
             totalEvents={events.length}
+            wide={hasFieldEvents}
           />
         </section>
       </main>
@@ -182,7 +225,12 @@ export default function App() {
   );
 }
 
-function Sidebar() {
+interface SidebarProps {
+  activeStage: LoopName | null;
+  onSelectStage: (stage: LoopName) => void;
+}
+
+function Sidebar({ activeStage, onSelectStage }: SidebarProps) {
   return (
     <aside className="sidebar">
       <div className="brand">
@@ -194,27 +242,31 @@ function Sidebar() {
       </div>
 
       <nav className="stage-nav" aria-label="Lifecycle stages">
-        <button className="stage-item active" type="button">
-          <span className="stage-index">2</span>
-          <span>
-            <strong>AppInspect</strong>
-            <small>Active replay</small>
-          </span>
-          <Activity size={18} />
-        </button>
-        <button className="stage-item disabled" type="button" disabled>
-          <span className="stage-index">1</span>
-          <span>
-            <strong>Onboarding</strong>
-            <small>Disabled / future</small>
-          </span>
-          <Circle size={16} />
-        </button>
+        {STAGE_ORDER.map((loop) => {
+          const stageData = STAGES[loop];
+          const isActive = loop === activeStage;
+          return (
+            <button
+              className={`stage-item ${isActive ? "active" : ""}`}
+              type="button"
+              key={loop}
+              onClick={() => onSelectStage(loop)}
+              aria-pressed={isActive}
+            >
+              <span className="stage-index">{stageData.index}</span>
+              <span>
+                <strong>{stageData.label}</strong>
+                <small>{isActive ? "Active replay" : "Switch replay"}</small>
+              </span>
+              {loop === "onboarding" ? <Network size={18} /> : <Activity size={18} />}
+            </button>
+          );
+        })}
       </nav>
 
       <div className="sidebar-footer">
-        <span>AppInspect-only milestone</span>
-        <span>No MCP or Splunk instance required</span>
+        <span>Dual-stage self-heal replay</span>
+        <span>Committed demo events — no live Splunk required</span>
       </div>
     </aside>
   );
@@ -231,6 +283,7 @@ interface TopBarProps {
   playing: boolean;
   replayState: ReplayViewState;
   speed: number;
+  tagline: string;
   totalDuration: number;
   setSpeed: (speed: number) => void;
 }
@@ -246,6 +299,7 @@ function TopBar({
   playing,
   replayState,
   speed,
+  tagline,
   totalDuration,
   setSpeed
 }: TopBarProps) {
@@ -254,7 +308,7 @@ function TopBar({
       <div className="title-block">
         <div>
           <h1>Replay Mode</h1>
-          <p>AppInspect self-heal replay</p>
+          <p>{tagline}</p>
         </div>
         <span className="live-dot" aria-label="Replay data loaded" />
       </div>
@@ -330,14 +384,15 @@ interface TimelinePanelProps {
   activeFailureId: string | null;
   failures: FailureReplayState[];
   onSelect: (failureId: string) => void;
+  subtitle: string;
 }
 
-function TimelinePanel({ activeFailureId, failures, onSelect }: TimelinePanelProps) {
+function TimelinePanel({ activeFailureId, failures, onSelect, subtitle }: TimelinePanelProps) {
   return (
     <section className="panel timeline-panel">
       <PanelHeader
         title="Self-Heal Timeline"
-        subtitle="AppInspect replay"
+        subtitle={subtitle}
         icon={<Gauge size={18} />}
       />
       <div className="timeline-tracks">
@@ -453,12 +508,12 @@ function LedgerPanel({
   );
 }
 
-function ArtifactsPanel() {
+function ArtifactsPanel({ artifacts, label }: { artifacts: StageArtifact[]; label: string }) {
   return (
     <section className="panel artifacts-panel">
-      <PanelHeader title="Artifacts" subtitle="Generated by AppInspect loop" icon={<FolderOpen size={18} />} />
+      <PanelHeader title="Artifacts" subtitle={label} icon={<FolderOpen size={18} />} />
       <div className="artifact-table">
-        {artifactRows.map((row) => (
+        {artifacts.map((row) => (
           <div className="artifact-row" key={row.path}>
             <FileJson size={16} />
             <span className={`artifact-status ${row.status}`}>{row.type}</span>
@@ -470,17 +525,58 @@ function ArtifactsPanel() {
   );
 }
 
+function CimMappingPanel({
+  fieldMappings,
+  piiFlags
+}: {
+  fieldMappings: FieldMapping[];
+  piiFlags: string[];
+}) {
+  return (
+    <section className="panel cim-panel">
+      <PanelHeader
+        title="CIM Mapping & PII"
+        subtitle={`${fieldMappings.length} mapped · ${piiFlags.length} PII`}
+        icon={<Workflow size={18} />}
+      />
+      {fieldMappings.length === 0 ? (
+        <p className="empty-state">No CIM mappings verified yet.</p>
+      ) : (
+        <div className="cim-list">
+          {fieldMappings.map((mapping) => (
+            <div className="cim-row" key={mapping.cim}>
+              <code>{mapping.raw}</code>
+              <span className="cim-arrow">→</span>
+              <code>{mapping.cim}</code>
+              {piiFlags.includes(mapping.raw) ? (
+                <span className="pii-chip">
+                  <ShieldAlert size={13} />
+                  PII
+                </span>
+              ) : (
+                <span className="cim-spacer" />
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
 function EventStreamPanel({
   activeEvent,
   events,
-  totalEvents
+  totalEvents,
+  wide
 }: {
   activeEvent: ReplayEvent | null;
   events: ReplayEvent[];
   totalEvents: number;
+  wide: boolean;
 }) {
   return (
-    <section className="panel event-panel">
+    <section className={`panel event-panel ${wide ? "event-panel--wide" : ""}`}>
       <PanelHeader
         title="Event Stream"
         subtitle={`${events.length} / ${totalEvents} events`}
@@ -529,6 +625,16 @@ function indexLabel(index: number): string {
 }
 
 function eventSummary(event: ReplayEvent): string {
+  if (event.type === "field_extracted") {
+    return `${event.raw_field} → ${event.cim_field}`;
+  }
+  if (event.type === "pii_flagged") {
+    return `PII: ${event.field}`;
+  }
+  if (event.type === "mcp_tool_call") {
+    const detail = event.purpose ?? event.candidate_id ?? event.tool;
+    return `${event.tool} · ${event.status}${detail && detail !== event.tool ? ` (${detail})` : ""}`;
+  }
   if ("file" in event && typeof event.file === "string") {
     return event.file;
   }

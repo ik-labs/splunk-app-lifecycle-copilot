@@ -1,0 +1,232 @@
+[
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:07Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "started",
+    "purpose": "index_settle"
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:08Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "succeeded",
+    "purpose": "index_settle",
+    "count": 0
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:09Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "started",
+    "purpose": "index_settle"
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "succeeded",
+    "purpose": "index_settle",
+    "count": 150
+  },
+  {
+    "type": "run_started",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding"
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "started",
+    "iteration": 0,
+    "candidate_id": "candidate-00",
+    "query_argument": "query"
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "succeeded",
+    "iteration": 0,
+    "candidate_id": "candidate-00",
+    "rows": 100
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "failure_id": "onboarding:candidate-00:timestamp_coverage_gap",
+    "check": "timestamp_coverage_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not handle both timestamp formats: 54/99 extracted"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "failure_id": "onboarding:candidate-00:cim_mapping_gap",
+    "check": "cim_mapping_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not populate required CIM aliases: status->action"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "failure_id": "onboarding:candidate-00:pii_flag_gap",
+    "check": "pii_flag_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not flag required PII fields: payer_vpa, payer_mobile"
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-04T17:54:10Z",
+    "failure_id": "onboarding:candidate-00:timestamp_coverage_gap",
+    "check": "timestamp_coverage_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not handle both timestamp formats: 54/99 extracted",
+    "text": "The candidate only handles one timestamp shape, but the fixture mixes ISO-8601 values and epoch milliseconds."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-04T17:54:10Z",
+    "failure_id": "onboarding:candidate-00:timestamp_coverage_gap",
+    "check": "timestamp_coverage_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not handle both timestamp formats: 54/99 extracted",
+    "summary": "Replaced naive positional extraction with robust key/value extraction, CIM aliases, timestamp handling, and PII flags."
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:10Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "started",
+    "iteration": 1,
+    "candidate_id": "candidate-01",
+    "query_argument": "query"
+  },
+  {
+    "type": "mcp_tool_call",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "tool": "splunk_run_query",
+    "status": "succeeded",
+    "iteration": 1,
+    "candidate_id": "candidate-01",
+    "rows": 100
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "amt",
+    "cim_field": "amount",
+    "message": "Mapped amt to amount."
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "status",
+    "cim_field": "action",
+    "message": "Mapped status to action."
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "vpa",
+    "cim_field": "dest",
+    "message": "Mapped vpa to dest."
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "payer_vpa",
+    "cim_field": "src_user",
+    "message": "Mapped payer_vpa to src_user."
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "txn_id",
+    "cim_field": "transaction_id",
+    "message": "Mapped txn_id to transaction_id."
+  },
+  {
+    "type": "field_extracted",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "raw_field": "gstin",
+    "cim_field": "vendor_id",
+    "message": "Mapped gstin to vendor_id."
+  },
+  {
+    "type": "pii_flagged",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "field": "payer_vpa",
+    "message": "Flagged payer_vpa as PII."
+  },
+  {
+    "type": "pii_flagged",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "candidate_id": "candidate-01",
+    "field": "payer_mobile",
+    "message": "Flagged payer_mobile as PII."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-04T17:54:11Z",
+    "failure_id": "onboarding:candidate-00:timestamp_coverage_gap",
+    "check": "timestamp_coverage_gap",
+    "file": "candidate-00.spl",
+    "line": null,
+    "message": "Candidate did not handle both timestamp formats: 54/99 extracted",
+    "result": "pass",
+    "iteration": 1
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-04T17:54:11Z",
+    "stage": "onboarding",
+    "iteration": 1,
+    "failure": "timestamp_coverage_gap (candidate-00.spl)",
+    "diagnosis": "The candidate only handles one timestamp shape, but the fixture mixes ISO-8601 values and epoch milliseconds.",
+    "patch": "Replaced naive positional extraction with robust key/value extraction, CIM aliases, timestamp handling, and PII flags.",
+    "rationale": "Use a timestamp expression that accepts either ISO-8601 or a 13-digit epoch-millisecond prefix.",
+    "result": "pass",
+    "failure_id": "onboarding:candidate-00:timestamp_coverage_gap",
+    "message": "Candidate did not handle both timestamp formats: 54/99 extracted"
+  },
+  {
+    "type": "run_complete",
+    "ts": "2026-06-04T17:54:11Z",
+    "loop": "onboarding",
+    "status": "clean",
+    "iterations": 1
+  }
+]

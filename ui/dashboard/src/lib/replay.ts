@@ -2,8 +2,12 @@ import type {
   DiagnosisEvent,
   FailureDetectedEvent,
   FailureReplayState,
+  FieldExtractedEvent,
+  FieldMapping,
   LedgerEntryEvent,
+  McpToolCallEvent,
   PatchAppliedEvent,
+  PiiFlaggedEvent,
   ProvenanceEntry,
   ReplayEvent,
   ReplayMetrics,
@@ -45,9 +49,10 @@ export function deriveReplayState(events: ReplayEvent[], activeIndex: number): R
   const fullInitialFailureIds = getInitialFailureIds(events);
   const fullLedgerEntries = events.filter(isLedgerEntry);
   const visibleLedgerEntries = visibleEvents.filter(isLedgerEntry);
-  const failures = deriveFailures(events, visibleEvents, fullLedgerEntries);
   const completeEvent = findLast(visibleEvents, isRunComplete);
-  const metrics = deriveMetrics(fullInitialFailureIds, failures, events);
+  const cleanCompletion = completeEvent?.status === "clean";
+  const failures = deriveFailures(events, visibleEvents, fullLedgerEntries, cleanCompletion);
+  const metrics = deriveMetrics(fullInitialFailureIds, failures, visibleEvents, cleanCompletion);
 
   return {
     visibleEvents,
@@ -57,7 +62,9 @@ export function deriveReplayState(events: ReplayEvent[], activeIndex: number): R
     metrics,
     runStatus: completeEvent?.status ?? (visibleEvents.length > 0 ? "running" : "idle"),
     activeFailureId: getActiveFailureId(visibleEvents),
-    activeEvent: visibleEvents.at(-1) ?? null
+    activeEvent: visibleEvents.at(-1) ?? null,
+    fieldMappings: getFieldMappings(visibleEvents),
+    piiFlags: getPiiFlags(visibleEvents)
   };
 }
 
@@ -68,27 +75,37 @@ export function parseProvenance(raw: string): ProvenanceEntry[] {
 function deriveMetrics(
   initialFailureIds: string[],
   failures: FailureReplayState[],
-  allEvents: ReplayEvent[]
+  visibleEvents: ReplayEvent[],
+  cleanCompletion: boolean
 ): ReplayMetrics {
-  const healed = failures.filter((failure) => failure.revalidated === "pass").length;
+  const initialFailures = initialFailureIds.length;
+  // A clean run_complete means every detected gap is resolved, even when a
+  // single onboarding patch heals several at once without per-failure events.
+  const healed = cleanCompletion
+    ? initialFailures
+    : failures.filter((failure) => failure.revalidated === "pass").length;
   const iterations = Math.max(
     0,
-    ...allEvents
+    ...visibleEvents
       .map((event) => getIterationCount(event))
   );
 
   return {
-    initialFailures: initialFailureIds.length,
+    initialFailures,
     healed,
     iterations,
-    finalFailures: Math.max(0, initialFailureIds.length - healed)
+    finalFailures: Math.max(0, initialFailures - healed),
+    mcpCalls: visibleEvents.filter(
+      (event) => isMcpToolCall(event) && event.status === "started"
+    ).length
   };
 }
 
 function deriveFailures(
   allEvents: ReplayEvent[],
   visibleEvents: ReplayEvent[],
-  fullLedgerEntries: LedgerEntryEvent[]
+  fullLedgerEntries: LedgerEntryEvent[],
+  cleanCompletion: boolean
 ): FailureReplayState[] {
   const initialFailures = getInitialFailures(allEvents);
   const states = new Map<string, FailureReplayState>();
@@ -142,6 +159,26 @@ function deriveFailures(
     }
   }
 
+  if (cleanCompletion) {
+    // Onboarding heals every detected gap with one deterministic candidate
+    // swap, but only the selected gap emits diagnosis/patch/revalidate events.
+    // Attribute that single fix to the still-open gaps so the timeline reads
+    // as fully healed once the run is clean.
+    const lastPatch = findLast(visibleEvents, isPatchApplied);
+    const lastDiagnosis = findLast(visibleEvents, isDiagnosis);
+    for (const failure of states.values()) {
+      if (failure.revalidated === "pass") {
+        continue;
+      }
+      failure.detected = true;
+      failure.diagnosed = true;
+      failure.patched = true;
+      failure.revalidated = "pass";
+      failure.diagnosis ??= lastDiagnosis?.text;
+      failure.patch ??= lastPatch?.summary;
+    }
+  }
+
   return [...states.values()].sort(compareFailures);
 }
 
@@ -149,7 +186,10 @@ function getInitialFailures(events: ReplayEvent[]): FailureDetectedEvent[] {
   const failures: FailureDetectedEvent[] = [];
   const seen = new Set<string>();
   for (const event of events) {
-    if (event.type !== "run_started" && event.type !== "failure_detected") {
+    // The initial batch ends once the self-heal loop starts acting on a
+    // failure. Setup noise (run_started, and onboarding's leading
+    // mcp_tool_call settle/query events) is skipped, not treated as the end.
+    if (isHealingEvent(event)) {
       break;
     }
     if (isFailureDetected(event) && !seen.has(event.failure_id)) {
@@ -158,6 +198,38 @@ function getInitialFailures(events: ReplayEvent[]): FailureDetectedEvent[] {
     }
   }
   return failures;
+}
+
+function isHealingEvent(event: ReplayEvent): boolean {
+  return (
+    isDiagnosis(event) ||
+    isPatchApplied(event) ||
+    isRevalidated(event) ||
+    isLedgerEntry(event) ||
+    isRunComplete(event)
+  );
+}
+
+function getFieldMappings(visibleEvents: ReplayEvent[]): FieldMapping[] {
+  const mappings: FieldMapping[] = [];
+  const seen = new Set<string>();
+  for (const event of visibleEvents) {
+    if (isFieldExtracted(event) && !seen.has(event.cim_field)) {
+      seen.add(event.cim_field);
+      mappings.push({ raw: event.raw_field, cim: event.cim_field });
+    }
+  }
+  return mappings;
+}
+
+function getPiiFlags(visibleEvents: ReplayEvent[]): string[] {
+  const flags: string[] = [];
+  for (const event of visibleEvents) {
+    if (isPiiFlagged(event) && !flags.includes(event.field)) {
+      flags.push(event.field);
+    }
+  }
+  return flags;
 }
 
 function getInitialFailureIds(events: ReplayEvent[]): string[] {
@@ -232,6 +304,18 @@ function isPatchApplied(event: ReplayEvent): event is PatchAppliedEvent {
 
 function isRevalidated(event: ReplayEvent): event is RevalidatedEvent {
   return event.type === "revalidated";
+}
+
+function isMcpToolCall(event: ReplayEvent): event is McpToolCallEvent {
+  return event.type === "mcp_tool_call";
+}
+
+function isFieldExtracted(event: ReplayEvent): event is FieldExtractedEvent {
+  return event.type === "field_extracted";
+}
+
+function isPiiFlagged(event: ReplayEvent): event is PiiFlaggedEvent {
+  return event.type === "pii_flagged";
 }
 
 function getIterationCount(event: ReplayEvent): number {

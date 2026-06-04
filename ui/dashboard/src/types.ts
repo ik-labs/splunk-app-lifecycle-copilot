@@ -73,6 +73,36 @@ export interface RunCompleteEvent extends BaseReplayEvent {
   iterations: number;
 }
 
+export interface McpToolCallEvent extends BaseReplayEvent {
+  type: "mcp_tool_call";
+  loop: LoopName;
+  tool: string;
+  status: "started" | "succeeded" | "failed";
+  purpose?: string;
+  candidate_id?: string;
+  iteration?: number;
+  rows?: number;
+  count?: number | null;
+  error?: string;
+}
+
+export interface FieldExtractedEvent extends BaseReplayEvent {
+  type: "field_extracted";
+  loop: LoopName;
+  candidate_id: string;
+  raw_field: string;
+  cim_field: string;
+  message: string;
+}
+
+export interface PiiFlaggedEvent extends BaseReplayEvent {
+  type: "pii_flagged";
+  loop: LoopName;
+  candidate_id: string;
+  field: string;
+  message: string;
+}
+
 export interface UnknownReplayEvent extends BaseReplayEvent {
   type: string;
   [key: string]: unknown;
@@ -86,6 +116,9 @@ export type ReplayEvent =
   | RevalidatedEvent
   | LedgerEntryEvent
   | RunCompleteEvent
+  | McpToolCallEvent
+  | FieldExtractedEvent
+  | PiiFlaggedEvent
   | UnknownReplayEvent;
 
 export interface ProvenanceEntry {
@@ -125,6 +158,12 @@ export interface ReplayMetrics {
   healed: number;
   iterations: number;
   finalFailures: number;
+  mcpCalls: number;
+}
+
+export interface FieldMapping {
+  raw: string;
+  cim: string;
 }
 
 export interface ReplayViewState {
@@ -136,4 +175,6 @@ export interface ReplayViewState {
   runStatus: RunStatus | "running" | "idle";
   activeFailureId: string | null;
   activeEvent: ReplayEvent | null;
+  fieldMappings: FieldMapping[];
+  piiFlags: string[];
 }
