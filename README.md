@@ -148,9 +148,11 @@ two PII flag events are written for dashboard replay.
 
 ## Dashboard Replay Mode
 
-The first dashboard milestone is AppInspect replay only. It renders committed
-demo events from `demo/appinspect_events.json` and does not require Splunk,
-MCP, or a live WebSocket.
+The dashboard replays both self-heal loops. Use the sidebar to switch between
+the **Onboarding** and **AppInspect** stages; each renders committed demo
+events (`demo/onboarding_events.json`, `demo/appinspect_events.json`) and
+requires no Splunk, MCP, or live WebSocket. The onboarding stage adds an MCP
+tool-call count and a CIM-mapping / PII panel sourced from a verified live run.
 
 ```bash
 cd ui/dashboard
