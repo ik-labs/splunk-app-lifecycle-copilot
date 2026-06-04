@@ -71,7 +71,8 @@ def test_search(service):
     time.sleep(8)  # let the event index
     try:
         import splunklib.results as results
-        job = service.jobs.oneshot('search sourcetype=smoke_test | head 1')
+        job = service.jobs.oneshot('search sourcetype=smoke_test | head 1',
+                                   output_mode='json')
         rows = list(results.JSONResultsReader(job))
         if rows:
             ok("search returned the ingested event")
