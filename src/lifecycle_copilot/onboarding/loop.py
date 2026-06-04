@@ -2,17 +2,18 @@ from __future__ import annotations
 
 import json
 import os
+import time
 import uuid
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from lifecycle_copilot.diagnosis import Diagnosis, DiagnosisProvider
 from lifecycle_copilot.events import EventRecorder
 from lifecycle_copilot.provenance import ProvenanceLedger
 from lifecycle_copilot.self_heal import SelfHealEngine, SelfHealRunResult, ValidationResult
 
-from .candidates import get_candidate
+from .candidates import build_base_search, get_candidate
 from .hec import HecIngestor
 from .mcp_client import (
     RUN_QUERY_TOOL,
@@ -24,6 +25,48 @@ from .mcp_client import (
 from .models import Candidate, CandidateValidation
 from .patchers import CandidateState, apply_onboarding_patch, select_onboarding_failure
 from .validator import validate_candidate_rows
+
+
+def _parse_count(rows: list[dict[str, Any]]) -> int | None:
+    """Pull an integer ``count`` from the first row of a ``| stats count`` result."""
+    if not rows:
+        return None
+    raw = rows[0].get("count")
+    try:
+        return int(raw)
+    except (TypeError, ValueError):
+        return None
+
+
+def wait_for_indexing(
+    run_count: Callable[[], int | None],
+    expected: int,
+    *,
+    timeout: float,
+    interval: float,
+    monotonic: Callable[[], float] = time.monotonic,
+    sleep: Callable[[float], None] = time.sleep,
+) -> int:
+    """Poll ``run_count`` until the indexed count reaches ``expected``.
+
+    HEC ingestion is acknowledged before Splunk finishes indexing, so the first
+    validation can race ahead and see zero rows. This blocks until the indexed
+    count catches up (or ``timeout`` elapses), returning the last observed count.
+    A non-positive ``timeout`` skips polling entirely.
+    """
+    last = 0
+    if timeout <= 0:
+        return last
+    deadline = monotonic() + timeout
+    while True:
+        count = run_count()
+        if count is not None:
+            last = count
+            if count >= expected:
+                return count
+        if monotonic() >= deadline:
+            return last
+        sleep(interval)
 
 
 @dataclass(frozen=True)
@@ -91,12 +134,16 @@ class OnboardingLoop:
         max_iters: int = 3,
         mcp_client: McpSplunkClient | None = None,
         hec_ingestor: HecIngestor | None = None,
+        index_settle_timeout: float = 30.0,
+        index_settle_interval: float = 1.5,
     ) -> None:
         self.log_file = Path(log_file)
         self.run_dir = Path(run_dir)
         self.max_iters = max_iters
         self.mcp_client = mcp_client
         self.hec_ingestor = hec_ingestor
+        self.index_settle_timeout = index_settle_timeout
+        self.index_settle_interval = index_settle_interval
         self.run_id = uuid.uuid4().hex[:12]
         self.splunk_source = f"copilot:onboarding:{self.run_id}"
 
@@ -123,6 +170,7 @@ class OnboardingLoop:
             ingested_count = hec_ingestor.ingest_lines(
                 self.log_file.read_text(encoding="utf-8").splitlines()
             )
+            self._settle_indexing(mcp_client, events, ingested_count)
 
             def validate(iteration: int) -> ValidationResult:
                 candidate = self._candidate_for_state(state)
@@ -207,6 +255,61 @@ class OnboardingLoop:
             )
             events.write_snapshot()
             raise
+
+    def _settle_indexing(
+        self,
+        mcp_client: McpSplunkClient,
+        events: EventRecorder,
+        ingested_count: int,
+    ) -> int:
+        if self.index_settle_timeout <= 0 or ingested_count <= 0:
+            return 0
+        count_spl = (
+            build_base_search(
+                self._onboarding_index(),
+                self._onboarding_sourcetype(),
+                self.splunk_source,
+            )
+            + " | stats count"
+        )
+
+        def run_count() -> int | None:
+            events.emit(
+                "mcp_tool_call",
+                loop="onboarding",
+                tool=RUN_QUERY_TOOL,
+                status="started",
+                purpose="index_settle",
+            )
+            try:
+                response = mcp_client.run_query(count_spl)
+            except Exception as exc:
+                events.emit(
+                    "mcp_tool_call",
+                    loop="onboarding",
+                    tool=RUN_QUERY_TOOL,
+                    status="failed",
+                    purpose="index_settle",
+                    error=str(exc),
+                )
+                return None
+            count = _parse_count(response.rows)
+            events.emit(
+                "mcp_tool_call",
+                loop="onboarding",
+                tool=RUN_QUERY_TOOL,
+                status="succeeded",
+                purpose="index_settle",
+                count=count,
+            )
+            return count
+
+        return wait_for_indexing(
+            run_count,
+            ingested_count,
+            timeout=self.index_settle_timeout,
+            interval=self.index_settle_interval,
+        )
 
     def _candidate_for_state(self, state: CandidateState) -> Candidate:
         return get_candidate(

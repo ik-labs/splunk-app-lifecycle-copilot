@@ -1,7 +1,7 @@
 import json
 from pathlib import Path
 
-from lifecycle_copilot.onboarding.loop import OnboardingLoop
+from lifecycle_copilot.onboarding.loop import OnboardingLoop, wait_for_indexing
 from lifecycle_copilot.onboarding.mcp_client import McpPreflight, McpQueryResponse
 
 from test_onboarding_validator import robust_rows
@@ -9,6 +9,46 @@ from test_onboarding_validator import robust_rows
 
 def read_jsonl(path: Path) -> list[dict]:
     return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def test_wait_for_indexing_returns_when_expected_reached() -> None:
+    counts = iter([0, 50, 150])
+    slept: list[float] = []
+    result = wait_for_indexing(
+        lambda: next(counts),
+        expected=150,
+        timeout=30,
+        interval=1.5,
+        monotonic=lambda: 0.0,
+        sleep=slept.append,
+    )
+    assert result == 150
+    assert slept == [1.5, 1.5]  # slept twice (0 -> 50 -> 150)
+
+
+def test_wait_for_indexing_gives_up_at_timeout() -> None:
+    clock = iter([0.0, 0.0, 5.0])  # third probe is past the deadline
+    result = wait_for_indexing(
+        lambda: 10,  # never reaches expected
+        expected=150,
+        timeout=1.0,
+        interval=0.1,
+        monotonic=lambda: next(clock),
+        sleep=lambda _: None,
+    )
+    assert result == 10  # returns the last observed count without hanging
+
+
+def test_wait_for_indexing_skips_when_timeout_non_positive() -> None:
+    probed = False
+
+    def run_count() -> int:
+        nonlocal probed
+        probed = True
+        return 0
+
+    assert wait_for_indexing(run_count, expected=150, timeout=0, interval=1.0) == 0
+    assert probed is False
 
 
 def test_onboarding_loop_heals_with_fake_mcp_and_hec(tmp_path: Path) -> None:
@@ -23,6 +63,7 @@ def test_onboarding_loop_heals_with_fake_mcp_and_hec(tmp_path: Path) -> None:
         max_iters=3,
         mcp_client=fake_mcp,
         hec_ingestor=fake_hec,
+        index_settle_timeout=0,
     ).run()
 
     assert result.status == "clean"
