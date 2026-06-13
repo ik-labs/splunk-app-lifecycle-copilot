@@ -10,6 +10,7 @@ from rich.table import Table
 
 from .appinspect.loop import AppInspectLoop
 from .onboarding.loop import OnboardingLoop
+from .spl_lint.loop import SplLintLoop
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -20,6 +21,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_appinspect(args)
     if args.command == "onboard":
         return run_onboard(args)
+    if args.command == "lint":
+        return run_lint(args)
 
     parser.error("No command selected.")
     return 2
@@ -44,6 +47,14 @@ def build_parser() -> argparse.ArgumentParser:
     onboard.add_argument("log_file", type=Path)
     onboard.add_argument("--out", type=Path, default=None)
     onboard.add_argument("--max-iters", type=int, default=3)
+
+    lint = subcommands.add_parser(
+        "lint",
+        help="Heal a costly SPL search until it is free of cost anti-patterns.",
+    )
+    lint.add_argument("spl_file", type=Path)
+    lint.add_argument("--out", type=Path, default=None)
+    lint.add_argument("--max-iters", type=int, default=5)
     return parser
 
 
@@ -119,6 +130,44 @@ def run_onboard(args: argparse.Namespace) -> int:
         result.run_dir,
         status=result.status,
         extra=[("Candidates & validation", "onboarding/")],
+    )
+
+    return 0 if result.status == "clean" else 2
+
+
+def run_lint(args: argparse.Namespace) -> int:
+    console = Console()
+    run_dir = args.out or default_run_dir("spl-lint")
+
+    try:
+        result = SplLintLoop(
+            source_query=args.spl_file,
+            run_dir=run_dir,
+            max_iters=args.max_iters,
+        ).run()
+    except FileExistsError as exc:
+        console.print(f"[red]Run failed:[/red] {exc}")
+        return 2
+    except Exception as exc:
+        console.print(f"[red]Run failed:[/red] {exc}")
+        return 1
+
+    table = Table(title="Cost-Aware SPL Lint Self-Heal Summary")
+    table.add_column("Metric")
+    table.add_column("Value")
+    table.add_row("Status", result.status)
+    table.add_row("Iterations", str(result.iterations))
+    table.add_row("Initial findings", str(result.initial_summary.get("failure", 0)))
+    table.add_row("Final findings", str(result.final_summary.get("failure", 0)))
+    table.add_row("Work query", str(result.work_query))
+    table.add_row("Run artifacts", str(result.run_dir))
+    console.print(table)
+
+    print_next_steps(
+        console,
+        result.run_dir,
+        status=result.status,
+        extra=[("SPL lint reports", "spl/")],
     )
 
     return 0 if result.status == "clean" else 2

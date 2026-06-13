@@ -1,0 +1,1 @@
+index=* sourcetype=upi_gateway_raw status=FAILED | sort -_time | stats count by payer_vpa

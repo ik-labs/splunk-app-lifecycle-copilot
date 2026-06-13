@@ -1,0 +1,206 @@
+[
+  {
+    "type": "run_started",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint"
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_wildcard_index",
+    "check": "spl_wildcard_index",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search runs against index=*, scanning every index on the instance."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_all_time",
+    "check": "spl_all_time",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered."
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_wildcard_index",
+    "check": "spl_wildcard_index",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search runs against index=*, scanning every index on the instance.",
+    "text": "The search runs against index=*, which forces Splunk to scan every index on the instance instead of only the relevant data."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_wildcard_index",
+    "check": "spl_wildcard_index",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search runs against index=*, scanning every index on the instance.",
+    "summary": "Replaced index=* with index=main to bound the search to one index."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_wildcard_index",
+    "check": "spl_wildcard_index",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search runs against index=*, scanning every index on the instance.",
+    "result": "pass",
+    "iteration": 1
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-13T05:57:55Z",
+    "stage": "spl_lint",
+    "iteration": 1,
+    "failure": "spl_wildcard_index (costly_search.spl)",
+    "diagnosis": "The search runs against index=*, which forces Splunk to scan every index on the instance instead of only the relevant data.",
+    "patch": "Replaced index=* with index=main to bound the search to one index.",
+    "rationale": "Pin the search to a specific index (index=main) so only relevant buckets are read.",
+    "result": "pass",
+    "failure_id": "spl_lint:spl_wildcard_index",
+    "message": "Search runs against index=*, scanning every index on the instance."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_all_time",
+    "check": "spl_all_time",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered."
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_all_time",
+    "check": "spl_all_time",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window.",
+    "text": "The search declares no earliest/latest time bound, so it can scan the full retention window and do far more work than the question requires."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_all_time",
+    "check": "spl_all_time",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window.",
+    "summary": "Added an explicit earliest=-24h window to bound the time range."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_all_time",
+    "check": "spl_all_time",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window.",
+    "result": "pass",
+    "iteration": 2
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-13T05:57:55Z",
+    "stage": "spl_lint",
+    "iteration": 2,
+    "failure": "spl_all_time (costly_search.spl)",
+    "diagnosis": "The search declares no earliest/latest time bound, so it can scan the full retention window and do far more work than the question requires.",
+    "patch": "Added an explicit earliest=-24h window to bound the time range.",
+    "rationale": "Add an explicit earliest=-24h window so the search reads a bounded time range.",
+    "result": "pass",
+    "failure_id": "spl_lint:spl_all_time",
+    "message": "Search has no earliest/latest bound, so it can scan the full retention window."
+  },
+  {
+    "type": "failure_detected",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered."
+  },
+  {
+    "type": "diagnosis",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered.",
+    "text": "The | sort command has no result limit, so Splunk must buffer and order the entire result set, which is memory- and time-intensive on large searches."
+  },
+  {
+    "type": "patch_applied",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered.",
+    "summary": "Capped | sort with an explicit 1000-row limit."
+  },
+  {
+    "type": "revalidated",
+    "ts": "2026-06-13T05:57:55Z",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "check": "spl_unbounded_sort",
+    "file": "costly_search.spl",
+    "line": 1,
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered.",
+    "result": "pass",
+    "iteration": 3
+  },
+  {
+    "type": "ledger_entry",
+    "ts": "2026-06-13T05:57:55Z",
+    "stage": "spl_lint",
+    "iteration": 3,
+    "failure": "spl_unbounded_sort (costly_search.spl)",
+    "diagnosis": "The | sort command has no result limit, so Splunk must buffer and order the entire result set, which is memory- and time-intensive on large searches.",
+    "patch": "Capped | sort with an explicit 1000-row limit.",
+    "rationale": "Cap the sort with an explicit limit (| sort 1000 ...) to bound memory and time.",
+    "result": "pass",
+    "failure_id": "spl_lint:spl_unbounded_sort",
+    "message": "| sort has no result limit, so the entire result set is buffered and ordered."
+  },
+  {
+    "type": "run_complete",
+    "ts": "2026-06-13T05:57:55Z",
+    "loop": "spl_lint",
+    "status": "clean",
+    "iterations": 3
+  }
+]
