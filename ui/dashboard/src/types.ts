@@ -138,6 +138,18 @@ export interface ProvenanceEntry {
   changed_paths: string[];
 }
 
+export interface AuditRow {
+  key: string;
+  iteration: number;
+  failure: string;
+  diagnosis: string;
+  patch: string;
+  rationale: string;
+  result: ValidationStatus;
+  changedPaths: string[];
+  timestamp: string | null;
+}
+
 export interface FailureReplayState {
   failureId: string;
   check: string;

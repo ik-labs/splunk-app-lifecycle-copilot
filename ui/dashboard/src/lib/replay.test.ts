@@ -1,9 +1,17 @@
 import { describe, expect, it } from "vitest";
 
 import appinspectEvents from "../../../../demo/appinspect_events.json";
+import appinspectProvenanceRaw from "../../../../demo/appinspect_provenance.jsonl?raw";
 import onboardingEvents from "../../../../demo/onboarding_events.json";
-import { deriveReplayState, summarizeStage } from "./replay";
-import type { ReplayEvent } from "../types";
+import onboardingProvenanceRaw from "../../../../demo/onboarding_provenance.jsonl?raw";
+import {
+  buildAuditTrail,
+  deriveReplayState,
+  formatLedgerTimestamp,
+  parseProvenance,
+  summarizeStage
+} from "./replay";
+import type { LedgerEntryEvent, ReplayEvent } from "../types";
 
 const events: ReplayEvent[] = [
   { type: "run_started", loop: "appinspect", ts: "2026-06-04T00:00:00Z" },
@@ -188,5 +196,75 @@ describe("summarizeStage", () => {
       fieldMappings: 0,
       piiFlags: 0
     });
+  });
+});
+
+describe("buildAuditTrail", () => {
+  it("builds one rich row per AppInspect provenance entry", () => {
+    const provenance = parseProvenance(appinspectProvenanceRaw);
+    const rows = buildAuditTrail(provenance, []);
+    expect(rows).toHaveLength(3);
+    expect(rows[0]).toMatchObject({
+      iteration: 1,
+      failure: "check_that_local_does_not_exist (local/)",
+      result: "pass",
+      changedPaths: ["local/"]
+    });
+    expect(rows[0].diagnosis).toMatch(/local\//);
+    expect(rows[0].rationale.length).toBeGreaterThan(0);
+  });
+
+  it("carries the onboarding diagnosis, rationale, and changed paths", () => {
+    const provenance = parseProvenance(onboardingProvenanceRaw);
+    const rows = buildAuditTrail(provenance, []);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      iteration: 1,
+      result: "pass",
+      changedPaths: ["onboarding/candidate-01.spl"]
+    });
+    expect(rows[0].diagnosis.length).toBeGreaterThan(0);
+    expect(rows[0].patch.length).toBeGreaterThan(0);
+  });
+
+  it("falls back to replay ledger entries when no provenance is present", () => {
+    const ledgerEntries: LedgerEntryEvent[] = [
+      {
+        type: "ledger_entry",
+        ts: "2026-06-04T00:00:07Z",
+        stage: "appinspect",
+        iteration: 2,
+        failure: "check_user_seed_conf_deny_list (default/user-seed.conf)",
+        diagnosis: "ships user-seed.conf",
+        patch: "removed user-seed.conf",
+        rationale: "credentials belong to Splunk auth",
+        result: "pass",
+        failure_id: "f2",
+        message: "seed exists"
+      }
+    ];
+    const rows = buildAuditTrail([], ledgerEntries);
+    expect(rows).toHaveLength(1);
+    expect(rows[0]).toMatchObject({
+      iteration: 2,
+      patch: "removed user-seed.conf",
+      result: "pass",
+      changedPaths: [],
+      timestamp: "2026-06-04T00:00:07Z"
+    });
+  });
+
+  it("returns an empty trail when there is nothing to show", () => {
+    expect(buildAuditTrail([], [])).toEqual([]);
+  });
+});
+
+describe("formatLedgerTimestamp", () => {
+  it("extracts the compact time from an ISO timestamp", () => {
+    expect(formatLedgerTimestamp("2026-06-04T08:46:29Z")).toBe("08:46:29Z");
+  });
+
+  it("returns an empty string for a null timestamp", () => {
+    expect(formatLedgerTimestamp(null)).toBe("");
   });
 });

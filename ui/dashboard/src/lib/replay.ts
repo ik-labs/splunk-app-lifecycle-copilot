@@ -1,4 +1,5 @@
 import type {
+  AuditRow,
   DiagnosisEvent,
   FailureDetectedEvent,
   FailureReplayState,
@@ -70,6 +71,49 @@ export function deriveReplayState(events: ReplayEvent[], activeIndex: number): R
 
 export function parseProvenance(raw: string): ProvenanceEntry[] {
   return parseJsonl<ProvenanceEntry>(raw);
+}
+
+/** Normalize the durable audit trail for the ledger panel. When the persisted
+ * provenance.jsonl is available it is the source of truth (the complete
+ * "remember" record, independent of replay position); otherwise we fall back to
+ * the ledger_entry events surfaced so far in the replay (uploaded/live runs). */
+export function buildAuditTrail(
+  provenance: ProvenanceEntry[],
+  ledgerEntries: LedgerEntryEvent[]
+): AuditRow[] {
+  if (provenance.length > 0) {
+    return provenance.map((entry) => ({
+      key: `${entry.failure_id}-${entry.iteration}`,
+      iteration: entry.iteration,
+      failure: entry.failure,
+      diagnosis: entry.diagnosis,
+      patch: entry.patch,
+      rationale: entry.rationale,
+      result: entry.validation_result,
+      changedPaths: entry.changed_paths ?? [],
+      timestamp: entry.timestamp ?? null
+    }));
+  }
+  return ledgerEntries.map((entry) => ({
+    key: `${entry.failure_id}-${entry.iteration}`,
+    iteration: entry.iteration,
+    failure: entry.failure,
+    diagnosis: entry.diagnosis,
+    patch: entry.patch,
+    rationale: entry.rationale,
+    result: entry.result,
+    changedPaths: [],
+    timestamp: entry.ts ?? null
+  }));
+}
+
+/** Pull the compact HH:MM:SS portion out of an ISO timestamp for ledger rows. */
+export function formatLedgerTimestamp(timestamp: string | null): string {
+  if (!timestamp) {
+    return "";
+  }
+  const match = /T(\d{2}:\d{2}:\d{2})/.exec(timestamp);
+  return match ? `${match[1]}Z` : timestamp;
 }
 
 export interface StageSummary {

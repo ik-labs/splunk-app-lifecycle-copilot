@@ -30,7 +30,9 @@ import {
 } from "./data/demo";
 import {
   EVENT_SPACING_MS,
+  buildAuditTrail,
   deriveReplayState,
+  formatLedgerTimestamp,
   formatReplayTime,
   getActiveIndex,
   getTotalDuration,
@@ -650,32 +652,68 @@ function LedgerPanel({
   ledgerEntries: ReplayViewState["ledgerEntries"];
   provenance: ProvenanceEntry[];
 }) {
-  const fallbackEntries = ledgerEntries.length > 0 ? ledgerEntries : [];
+  const rows = buildAuditTrail(provenance, ledgerEntries);
+  const persisted = provenance.length > 0;
   return (
     <section className="panel ledger-panel">
       <PanelHeader
         title="Provenance Ledger"
-        subtitle={`${provenance.length || ledgerEntries.length} entries`}
+        subtitle={
+          rows.length === 0
+            ? "audit trail"
+            : `${rows.length} ${rows.length === 1 ? "entry" : "entries"} · ${
+                persisted ? "persisted" : "replay"
+              }`
+        }
         icon={<ShieldCheck size={18} />}
       />
       <div className="ledger-list">
-        {fallbackEntries.length === 0 ? (
+        {rows.length === 0 ? (
           <p className="empty-state">Replay has not reached a persisted decision yet.</p>
         ) : (
-          fallbackEntries.map((entry) => (
-            <article className="ledger-row" key={`${entry.failure_id}-${entry.iteration}`}>
+          rows.map((row) => (
+            <article className="ledger-row" key={row.key}>
               <div className="ledger-row-top">
-                <span className="iteration-pill">I{entry.iteration}</span>
-                <strong>{entry.patch}</strong>
-                <span className="result-pass">{entry.result}</span>
+                <span className="iteration-pill">I{row.iteration}</span>
+                <code className="ledger-check">{row.failure}</code>
+                <span className={row.result === "pass" ? "result-pass" : "result-fail"}>
+                  {row.result}
+                </span>
+                {row.timestamp ? (
+                  <time className="ledger-time">{formatLedgerTimestamp(row.timestamp)}</time>
+                ) : null}
               </div>
-              <code>{entry.failure}</code>
-              <p>{entry.rationale}</p>
+              <dl className="ledger-fields">
+                <LedgerField label="Diagnosis" value={row.diagnosis} />
+                <LedgerField label="Patch" value={row.patch} />
+                <LedgerField label="Rationale" value={row.rationale} />
+              </dl>
+              {row.changedPaths.length > 0 ? (
+                <div className="ledger-changed">
+                  {row.changedPaths.map((path) => (
+                    <code className="changed-chip" key={path}>
+                      {path}
+                    </code>
+                  ))}
+                </div>
+              ) : null}
             </article>
           ))
         )}
       </div>
     </section>
+  );
+}
+
+function LedgerField({ label, value }: { label: string; value: string }) {
+  if (!value) {
+    return null;
+  }
+  return (
+    <div className="ledger-field">
+      <dt>{label}</dt>
+      <dd>{value}</dd>
+    </div>
   );
 }
 
