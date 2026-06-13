@@ -1,0 +1,35 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Copilot: AppInspect self-heal",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "lifecycle_copilot",
+      "args": ["appinspect", "fixtures/appinspect/broken_app"],
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Copilot: SPL lint self-heal",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "lifecycle_copilot",
+      "args": ["lint", "fixtures/spl_lint/costly_search.spl"],
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    },
+    {
+      "name": "Copilot: Onboard (live MCP)",
+      "type": "debugpy",
+      "request": "launch",
+      "module": "lifecycle_copilot",
+      "args": ["onboard", "fixtures/onboarding/sample_upi.log"],
+      "python": "${workspaceFolder}/.venv/bin/python",
+      "console": "integratedTerminal",
+      "justMyCode": false
+    }
+  ]
+}

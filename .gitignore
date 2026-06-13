@@ -5,6 +5,7 @@
 .vscode/*
 !.vscode/tasks.json
 !.vscode/extensions.json
+!.vscode/launch.json
 
 # Secrets and local environment
 .env

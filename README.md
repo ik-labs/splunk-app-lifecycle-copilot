@@ -247,6 +247,20 @@ same reducer used for replay, so live and replay render identically; only the
 event source differs. Point the dashboard at a non-default server with
 `VITE_LIVE_URL`. Onboarding is replay-only here because it requires Splunk + MCP.
 
+## Run from VS Code
+
+The repo ships a `.vscode/` workspace so the agent runs from the IDE — the same
+`copilot` entry point, surfaced as **Run Task** and **Run and Debug** entries:
+
+- **Terminal → Run Task** lists each loop: *AppInspect self-heal*, *SPL lint
+  self-heal*, *Onboard (live MCP)*, plus *Live stream server*, *Dashboard*, and
+  *Run Python tests*. AppInspect and SPL lint need no Splunk.
+- **Run and Debug** (`launch.json`) starts any loop under `debugpy` with the
+  venv interpreter, so you can set breakpoints in the self-heal engine.
+- `extensions.json` recommends the Python, debugpy, and Bun extensions.
+
+Run `make setup` first so `.venv` exists; the tasks call `.venv/bin/copilot`.
+
 ## Design Principle
 
 The self-heal engine is intentionally constrained. The LLM produces diagnosis and rationale text; deterministic patch functions make file changes. That gives the demo repeatability, keeps patch provenance reviewable, and makes the platform thesis credible.

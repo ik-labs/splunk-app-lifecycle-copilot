@@ -73,7 +73,7 @@ Do all of this before hitting record, so the live segment can't stall:
 
 | | |
 |---|---|
-| **Screen** | Optional VS Code cutaway (same `copilot` entry point from the IDE), then repo URL / title card. |
+| **Screen** | Optional VS Code cutaway: **Terminal → Run Task → "Copilot: SPL lint self-heal"** (same `copilot` entry point from the IDE, via the committed `.vscode/tasks.json`), then repo URL / title card. |
 | **Voiceover** | "A week of expert-gated toil, compressed to an afternoon — with an audit trail, and the Splunk MCP server orchestrating real actions across the lifecycle. Splunk explains. We resolve, validate, and remember." |
 | **End on** | Repo URL on screen. |
 
