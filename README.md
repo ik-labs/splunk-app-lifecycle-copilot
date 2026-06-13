@@ -30,7 +30,7 @@ Stages 3-5 are shown in the architecture as future lifecycle extensions, not imp
 
 ## Requirements
 
-- Python 3.13+
+- Python 3.13 (use 3.13 specifically, not 3.14 — see note below)
 - Docker Desktop
 - Homebrew `libmagic` on macOS for `splunk-appinspect`
 - Splunk Enterprise Docker image (`splunk/splunk:latest`)
@@ -41,6 +41,12 @@ Python dependency notes:
 
 - PyPI package is `splunk-sdk`; import name is `splunklib`.
 - `splunklib.ai` requires `splunk-sdk>=3.0.0`, which requires Python 3.13+.
+- Pin the interpreter to **Python 3.13**, not 3.14. On 3.14, AppInspect's bundled
+  Python static analyzer fails to initialize and reports every Python check as an
+  `error` ("Python analyzer is failed in initialization"). That leaves the
+  AppInspect self-heal loop unable to reach a clean result even after the three
+  real failures are patched. On macOS: `brew install python@3.13` and build the
+  venv with `/opt/homebrew/opt/python@3.13/bin/python3.13 -m venv .venv`.
 - `splunk_run_query` is the required MCP validation tool. `saia_*` tools are optional graceful enhancement only.
 
 ## Setup
