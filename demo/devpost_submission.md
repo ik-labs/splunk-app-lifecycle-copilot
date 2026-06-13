@@ -75,6 +75,6 @@ Stages 3 (scaffold + test data) and 5 (Simple XML → Dashboard Studio migration
 - **Track:** Platform & Developer Experience
 - **Bonus:** Best Use of Splunk MCP Server
 - **Newly created in the submission window:** Yes — the entire project (code, fixtures, dashboard, docs) was created within the hackathon window; commit history is public on the repo.
-- **Repository:** `<PUBLIC_GITHUB_URL>`  (must be public; MIT license shows in the GitHub About)
+- **Repository:** https://github.com/ik-labs/splunk-app-lifecycle-copilot  (public; MIT license shows in the GitHub About)
 - **Demo video (<3 min):** `<PUBLIC_VIDEO_URL>`  (script: `demo/demo_script.md`)
 - **Architecture diagram:** `architecture_diagram.md` in the repo
