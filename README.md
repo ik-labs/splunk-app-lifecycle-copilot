@@ -4,6 +4,32 @@ Splunk App Lifecycle Copilot is a hackathon MVP for carrying a Splunk app from r
 
 Positioning: Splunk's own AI can explain failures. This project resolves, validates, and remembers them.
 
+## Judges: 60-Second Path
+
+**Fastest look — no Splunk, no MCP, no install (needs only [Bun](https://bun.sh)):**
+
+```bash
+make dashboard          # cd ui/dashboard && bun install && bun run dev
+```
+
+Open the printed URL. The dashboard lands on a **Lifecycle** overview of both
+self-heal loops, then drill into the **Onboarding** and **AppInspect** stages.
+The **Provenance Ledger** panel is the "resolve, validate, *and remember*"
+thesis made literal — every diagnosis, patch, rationale, and validation result
+from a verified run, replayed from committed demo events.
+
+**Run the real software end-to-end:**
+
+```bash
+make setup              # Python 3.13 venv + install (see Requirements re: 3.13)
+make demo               # runs the loops, prints where every artifact landed
+```
+
+`make demo` always runs the dependency-free AppInspect loop. It also runs the
+live onboarding loop (HEC ingest → MCP `splunk_run_query` validation) when
+`.env` carries the Splunk + MCP credentials; otherwise it points back to the
+zero-deps dashboard replay. `make help` lists every target.
+
 ## Hackathon Scope
 
 - Event: Splunk Agentic Ops Hackathon
@@ -162,6 +188,12 @@ glance. From there, use the sidebar to open the **Onboarding** or
 (`demo/onboarding_events.json`, `demo/appinspect_events.json`) and requires no
 Splunk, MCP, or live WebSocket. The onboarding stage adds an MCP tool-call
 count and a CIM-mapping / PII panel sourced from a verified live run.
+
+Every stage also renders a **Provenance Ledger** panel: the complete, durable
+audit trail read from the persisted `*_provenance.jsonl` — each entry's
+diagnosis, patch, rationale, validation result, changed paths, and timestamp.
+That panel is the "and remember" half of the thesis, and it is exactly what a
+reviewer would inspect to trust an automated fix.
 
 ```bash
 cd ui/dashboard
