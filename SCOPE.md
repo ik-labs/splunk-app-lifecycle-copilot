@@ -13,14 +13,14 @@ An agent that carries a Splunk app from raw logs to a CIM-clean, AppInspect-gree
 
 ## 2. What we are building (MVP scope)
 
-Two fully working loops on a shared spine. Three further lifecycle stages are present in the architecture but explicitly marked not-implemented.
+Three fully working loops on a shared spine. Two further lifecycle stages are present in the architecture but explicitly marked not-implemented.
 
 | Stage | Status | Needs live Splunk? |
 |---|---|---|
 | 1. Onboarding loop (raw log → CIM-clean extraction) | **BUILD** | Yes |
 | 2. AppInspect loop (app → compliance-green) | **BUILD** | No (static analysis) |
 | 3. Scaffold + test data | Architecture only | — |
-| 4. Cost-aware SPL lint | Architecture only | — |
+| 4. Cost-aware SPL lint (costly search → clean) | **BUILD** | No (static analysis) |
 | 5. Dashboard migration | Architecture only | — |
 
 The shared spine = orchestrator agent + self-heal engine + deterministic patcher registry + provenance ledger + MCP/SDK layer. The self-heal engine is one piece of code reused by both loops; that reuse is the platform thesis.

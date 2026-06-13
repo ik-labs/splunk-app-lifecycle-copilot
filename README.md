@@ -37,12 +37,13 @@ zero-deps dashboard replay. `make help` lists every target.
 - Bonus target: Best Use of Splunk MCP Server
 - Submission deadline: June 15, 2026, 9:00 AM PDT
 
-The MVP builds two loops on one shared self-heal engine:
+The MVP builds three loops on one shared self-heal engine:
 
 - Stage 1, onboarding: raw UPI/GST-style logs -> inline `rex` / `eval` extraction candidates -> validation against real Splunk events through `splunk_run_query` -> final `props.conf` / `transforms.conf` only after convergence.
 - Stage 2, AppInspect: deliberately broken app -> AppInspect JSON failures -> deterministic patch functions -> re-run until green.
+- Stage 4, cost-aware SPL lint: a deliberately costly search -> deterministic cost findings (`index=*`, no time bound, unbounded `| sort`) -> deterministic rewrites -> re-lint until clean. Static analysis, no live Splunk.
 
-Stages 3-5 are shown in the architecture as future lifecycle extensions, not implemented in the MVP.
+Stages 3 (scaffold + test data) and 5 (dashboard migration) remain architecture-only future extensions.
 
 ## Current Repo Contents
 
@@ -170,6 +171,26 @@ Expected flow: `candidate-00` fails coverage checks, the deterministic patcher
 switches to `candidate-01`, MCP revalidation passes, six CIM mapping events and
 two PII flag events are written for dashboard replay.
 
+## Cost-Aware SPL Lint (Stage 4)
+
+The SPL lint loop is static like AppInspect — no live Splunk required. It lints
+a search for cost anti-patterns, heals each with a deterministic rewrite, and
+re-lints until clean.
+
+```bash
+copilot lint fixtures/spl_lint/costly_search.spl --out runs/spl-lint-demo
+```
+
+The fixture fires three findings, each healed in its own iteration:
+
+- `spl_wildcard_index`: `index=*` scans every index -> rewritten to `index=main`.
+- `spl_all_time`: no `earliest`/`latest` bound -> prepended `earliest=-24h`.
+- `spl_unbounded_sort`: `| sort` with no limit -> capped at `| sort 1000`.
+
+It writes the same artifact set as the other loops
+(`spl/iteration-XX.json`, `events.json`, `provenance.jsonl`, `summary.json`),
+so the run drops straight into the dashboard's SPL Lint stage.
+
 ## Demo Flow
 
 1. Terminal starts the agent and proves this is real software.
@@ -180,14 +201,15 @@ two PII flag events are written for dashboard replay.
 
 ## Dashboard Replay Mode
 
-The dashboard replays both self-heal loops. It opens on a **Lifecycle**
-overview that summarizes both loops side by side (status, failures healed,
-iterations, MCP calls) to make the one-engine/two-loops thesis legible at a
-glance. From there, use the sidebar to open the **Onboarding** or
-**AppInspect** stage; each renders committed demo events
-(`demo/onboarding_events.json`, `demo/appinspect_events.json`) and requires no
-Splunk, MCP, or live WebSocket. The onboarding stage adds an MCP tool-call
-count and a CIM-mapping / PII panel sourced from a verified live run.
+The dashboard replays all three self-heal loops. It opens on a **Lifecycle**
+overview that summarizes every loop side by side (status, failures healed,
+iterations, MCP calls) to make the one-engine/many-loops thesis legible at a
+glance. From there, use the sidebar to open the **Onboarding**, **AppInspect**,
+or **SPL Lint** stage; each renders committed demo events
+(`demo/onboarding_events.json`, `demo/appinspect_events.json`,
+`demo/spl_lint_events.json`) and requires no Splunk, MCP, or live WebSocket. The
+onboarding stage adds an MCP tool-call count and a CIM-mapping / PII panel
+sourced from a verified live run.
 
 Every stage also renders a **Provenance Ledger** panel: the complete, durable
 audit trail read from the persisted `*_provenance.jsonl` — each entry's
