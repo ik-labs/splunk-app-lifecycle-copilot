@@ -230,6 +230,23 @@ bun run test
 bun run build
 ```
 
+### Live Mode
+
+The dashboard can also stream a self-heal loop **as it runs**, instead of
+replaying committed events. Start the SSE server, then click **Go Live** on the
+AppInspect or SPL Lint stage:
+
+```bash
+copilot serve            # or: make serve  (defaults to 127.0.0.1:8765)
+```
+
+The server (`lifecycle_copilot.server`) runs the chosen static loop — AppInspect
+or SPL lint, neither needs a live Splunk — in a background thread and streams
+each event over Server-Sent Events. The browser feeds those events through the
+same reducer used for replay, so live and replay render identically; only the
+event source differs. Point the dashboard at a non-default server with
+`VITE_LIVE_URL`. Onboarding is replay-only here because it requires Splunk + MCP.
+
 ## Design Principle
 
 The self-heal engine is intentionally constrained. The LLM produces diagnosis and rationale text; deterministic patch functions make file changes. That gives the demo repeatability, keeps patch provenance reviewable, and makes the platform thesis credible.

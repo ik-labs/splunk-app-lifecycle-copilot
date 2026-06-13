@@ -38,6 +38,9 @@ demo-onboarding: ## Run only the live onboarding loop (needs Splunk + MCP in .en
 dashboard: ## Install deps and start the replay dashboard (no Splunk required)
 	cd ui/dashboard && bun install && bun run dev
 
+serve: ## Start the live SSE server for the dashboard's "Go Live" mode
+	$(VENV)/bin/copilot serve
+
 test: ## Run the Python and dashboard test suites
 	$(VENV)/bin/python -m pytest -q
 	cd ui/dashboard && bun run test
