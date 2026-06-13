@@ -50,6 +50,7 @@ Stages 3 (scaffold + test data) and 5 (dashboard migration) remain architecture-
 - `SCOPE.md`: source-of-truth scope, build sequencing, risks, and submission checklist.
 - `UX_DEMO_PLAN.md`: dashboard/CLI/IDE surfaces and the agent-to-UI event contract.
 - `architecture_diagram.md`: required architecture diagram artifact.
+- `demo/architecture_demo.md`: technical, presentation-ready architecture walkthrough (system overview, the self-heal engine, live-MCP onboarding, and live-mode SSE — five Mermaid diagrams) for the demo.
 - `docker-compose.yml`: local Splunk Enterprise container with HEC enabled.
 - `smoke_test.py`: Day-1 Splunk SDK, HEC, search, and AppInspect smoke test.
 - `fixtures/onboarding/sample_upi.log`: 150-line synthetic UPI transaction fixture.
