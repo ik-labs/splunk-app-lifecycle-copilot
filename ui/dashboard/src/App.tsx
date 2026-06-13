@@ -12,6 +12,7 @@ import {
   Network,
   Pause,
   Play,
+  Radio,
   RotateCcw,
   ShieldAlert,
   ShieldCheck,
@@ -40,6 +41,7 @@ import {
   summarizeStage,
   type StageSummary
 } from "./lib/replay";
+import { isLiveLoop, startLiveStream } from "./lib/liveStream";
 import type {
   FailureReplayState,
   FieldMapping,
@@ -61,11 +63,17 @@ export default function App() {
   const [playing, setPlaying] = useState(false);
   const [speed, setSpeed] = useState(1);
   const [selectedFailureId, setSelectedFailureId] = useState<string | null>(null);
+  const [liveEvents, setLiveEvents] = useState<ReplayEvent[] | null>(null);
+  const [liveState, setLiveState] = useState<"connecting" | "streaming" | "done" | "error">(
+    "connecting"
+  );
   const lastTickRef = useRef<number | null>(null);
+  const liveCancelRef = useRef<(() => void) | null>(null);
 
+  const live = liveEvents !== null;
   const dataset = STAGES[stage];
-  const events = uploadedEvents ?? dataset.events;
-  const provenance = uploadedEvents ? [] : dataset.provenance;
+  const events = live ? liveEvents : uploadedEvents ?? dataset.events;
+  const provenance = live || uploadedEvents ? [] : dataset.provenance;
   const artifacts = dataset.artifacts;
   const hasFieldEvents = useMemo(
     () => events.some((event) => event.type === "field_extracted"),
@@ -73,7 +81,8 @@ export default function App() {
   );
 
   const totalDuration = useMemo(() => getTotalDuration(events), [events]);
-  const activeIndex = getActiveIndex(events, elapsedMs);
+  // Live mode always shows the latest event; replay mode scrubs by elapsed time.
+  const activeIndex = live ? events.length - 1 : getActiveIndex(events, elapsedMs);
   const replayState = useMemo(() => deriveReplayState(events, activeIndex), [events, activeIndex]);
   const selectedFailure =
     replayState.failures.find(
@@ -130,9 +139,10 @@ export default function App() {
   };
 
   const handleSelectStage = (next: LoopName) => {
-    if (view === next && !uploadedEvents) {
+    if (view === next && !uploadedEvents && !live) {
       return;
     }
+    stopLive();
     setView(next);
     setStage(next);
     setUploadedEvents(null);
@@ -142,6 +152,7 @@ export default function App() {
   };
 
   const handleSelectOverview = () => {
+    stopLive();
     setView("overview");
     setUploadedEvents(null);
     setPlaying(false);
@@ -168,6 +179,34 @@ export default function App() {
       event.target.value = "";
     }
   };
+
+  const stopLive = () => {
+    liveCancelRef.current?.();
+    liveCancelRef.current = null;
+    setLiveEvents(null);
+  };
+
+  const handleToggleLive = () => {
+    if (live) {
+      stopLive();
+      return;
+    }
+    setPlaying(false);
+    setSelectedFailureId(null);
+    setUploadedEvents(null);
+    setLiveEvents([]);
+    setLiveState("connecting");
+    liveCancelRef.current = startLiveStream(stage, {
+      onEvent: (event) => {
+        setLiveEvents((current) => [...(current ?? []), event]);
+        setLiveState("streaming");
+      },
+      onDone: () => setLiveState("done"),
+      onError: () => setLiveState("error")
+    });
+  };
+
+  useEffect(() => () => liveCancelRef.current?.(), []);
 
   const stageSummaries = useMemo(
     () =>
@@ -204,16 +243,20 @@ export default function App() {
       <main className="workspace">
         <TopBar
           activeIndex={activeIndex}
+          canGoLive={isLiveLoop(stage)}
           eventCount={events.length}
           elapsedMs={elapsedMs}
+          live={live}
+          liveState={liveState}
           onPlayPause={handlePlayPause}
           onRestart={handleRestart}
           onScrub={handleScrub}
+          onToggleLive={handleToggleLive}
           onUpload={handleUpload}
           playing={playing}
           replayState={replayState}
           speed={speed}
-          tagline={uploadedEvents ? "Uploaded replay" : dataset.tagline}
+          tagline={live ? "Live self-heal stream" : uploadedEvents ? "Uploaded replay" : dataset.tagline}
           totalDuration={totalDuration}
           setSpeed={setSpeed}
         />
@@ -463,11 +506,15 @@ function StageSummaryCard({ entry, onOpen }: { entry: StageSummaryEntry; onOpen:
 
 interface TopBarProps {
   activeIndex: number;
+  canGoLive: boolean;
   eventCount: number;
   elapsedMs: number;
+  live: boolean;
+  liveState: "connecting" | "streaming" | "done" | "error";
   onPlayPause: () => void;
   onRestart: () => void;
   onScrub: (value: string) => void;
+  onToggleLive: () => void;
   onUpload: (event: ChangeEvent<HTMLInputElement>) => void;
   playing: boolean;
   replayState: ReplayViewState;
@@ -477,13 +524,24 @@ interface TopBarProps {
   setSpeed: (speed: number) => void;
 }
 
+const LIVE_LABEL: Record<TopBarProps["liveState"], string> = {
+  connecting: "Connecting…",
+  streaming: "Live",
+  done: "Live · done",
+  error: "Server offline"
+};
+
 function TopBar({
   activeIndex,
+  canGoLive,
   eventCount,
   elapsedMs,
+  live,
+  liveState,
   onPlayPause,
   onRestart,
   onScrub,
+  onToggleLive,
   onUpload,
   playing,
   replayState,
@@ -496,21 +554,36 @@ function TopBar({
     <header className="topbar">
       <div className="title-block">
         <div>
-          <h1>Replay Mode</h1>
+          <h1>{live ? "Live Mode" : "Replay Mode"}</h1>
           <p>{tagline}</p>
         </div>
-        <span className="live-dot" aria-label="Replay data loaded" />
+        {live ? (
+          <span className={`live-pill ${liveState}`}>
+            <span className="live-pulse" />
+            {LIVE_LABEL[liveState]}
+          </span>
+        ) : (
+          <span className="live-dot" aria-label="Replay data loaded" />
+        )}
       </div>
 
       <div className="transport" aria-label="Replay controls">
-        <button className="icon-button" type="button" onClick={onRestart} aria-label="Restart replay">
+        <button
+          className="icon-button"
+          type="button"
+          onClick={onRestart}
+          aria-label="Restart replay"
+          disabled={live}
+        >
           <SkipBack size={18} />
         </button>
-        <button className="icon-button primary" type="button" onClick={onPlayPause}>
+        <button className="icon-button primary" type="button" onClick={onPlayPause} disabled={live}>
           {playing ? <Pause size={18} /> : <Play size={18} />}
           <span>{playing ? "Pause" : "Play"}</span>
         </button>
-        <span className="timecode">{formatReplayTime(elapsedMs)}</span>
+        <span className="timecode">
+          {live ? `${eventCount} events` : formatReplayTime(elapsedMs)}
+        </span>
         <input
           aria-label="Replay position"
           className="scrubber"
@@ -520,11 +593,22 @@ function TopBar({
           step={1}
           type="range"
           value={Math.max(0, activeIndex)}
+          disabled={live}
         />
-        <span className="timecode muted">{formatReplayTime(totalDuration)}</span>
+        <span className="timecode muted">{live ? "live" : formatReplayTime(totalDuration)}</span>
       </div>
 
       <div className="topbar-actions">
+        {canGoLive ? (
+          <button
+            className={`live-button ${live ? "active" : ""}`}
+            type="button"
+            onClick={onToggleLive}
+          >
+            <Radio size={16} />
+            {live ? "Stop" : "Go Live"}
+          </button>
+        ) : null}
         <label className="upload-button">
           <Upload size={16} />
           Load events

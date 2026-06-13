@@ -4,7 +4,7 @@ import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from lifecycle_copilot.diagnosis import TemplateDiagnosisProvider
 from lifecycle_copilot.events import EventRecorder
@@ -34,11 +34,13 @@ class AppInspectLoop:
         run_dir: Path,
         max_iters: int = 5,
         appinspect_binary: str | None = None,
+        event_sink: Callable[[dict[str, Any]], None] | None = None,
     ) -> None:
         self.source_app = Path(source_app)
         self.run_dir = Path(run_dir)
         self.max_iters = max_iters
         self.runner = AppInspectRunner(appinspect_binary)
+        self.event_sink = event_sink
 
     def run(self) -> AppInspectLoopResult:
         if not self.source_app.is_dir():
@@ -52,7 +54,7 @@ class AppInspectLoop:
         appinspect_dir.mkdir(parents=True)
         shutil.copytree(self.source_app, work_app)
 
-        events = EventRecorder(self.run_dir)
+        events = EventRecorder(self.run_dir, on_event=self.event_sink)
         ledger = ProvenanceLedger(self.run_dir / "provenance.jsonl")
         diagnosis_provider = TemplateDiagnosisProvider()
 

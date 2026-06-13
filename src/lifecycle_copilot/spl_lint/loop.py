@@ -4,7 +4,7 @@ import json
 import shutil
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from lifecycle_copilot.events import EventRecorder
 from lifecycle_copilot.provenance import ProvenanceLedger
@@ -39,10 +39,12 @@ class SplLintLoop:
         source_query: Path,
         run_dir: Path,
         max_iters: int = 5,
+        event_sink: Callable[[dict[str, Any]], None] | None = None,
     ) -> None:
         self.source_query = Path(source_query)
         self.run_dir = Path(run_dir)
         self.max_iters = max_iters
+        self.event_sink = event_sink
 
     def run(self) -> SplLintLoopResult:
         if not self.source_query.is_file():
@@ -57,7 +59,7 @@ class SplLintLoop:
         work_root.mkdir(parents=True, exist_ok=True)
         shutil.copy2(self.source_query, work_query)
 
-        events = EventRecorder(self.run_dir)
+        events = EventRecorder(self.run_dir, on_event=self.event_sink)
         ledger = ProvenanceLedger(self.run_dir / "provenance.jsonl")
 
         def validate(iteration: int) -> ValidationResult:

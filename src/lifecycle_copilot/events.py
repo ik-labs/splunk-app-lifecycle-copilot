@@ -4,7 +4,7 @@ import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 
 def utc_now() -> str:
@@ -15,6 +15,7 @@ def utc_now() -> str:
 class EventRecorder:
     run_dir: Path
     events: list[dict[str, Any]] = field(default_factory=list)
+    on_event: Callable[[dict[str, Any]], None] | None = None
 
     def __post_init__(self) -> None:
         self.run_dir = Path(self.run_dir)
@@ -29,6 +30,12 @@ class EventRecorder:
         self.events.append(event)
         with self.jsonl_path.open("a", encoding="utf-8") as handle:
             handle.write(json.dumps(event, ensure_ascii=True) + "\n")
+        if self.on_event is not None:
+            # Live subscribers (e.g. the SSE server) should never break a run.
+            try:
+                self.on_event(event)
+            except Exception:  # noqa: BLE001 - streaming is best-effort
+                pass
         return event
 
     def write_snapshot(self) -> Path:

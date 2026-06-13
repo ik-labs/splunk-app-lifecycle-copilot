@@ -172,6 +172,85 @@ select {
   box-shadow: 0 0 0 4px rgba(25, 168, 63, 0.12);
 }
 
+.live-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-top: 2px;
+  border-radius: 999px;
+  padding: 4px 11px;
+  background: #fdecea;
+  color: #c0392b;
+  font-size: 12px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.live-pill.connecting {
+  background: #fff6e6;
+  color: #9a6a00;
+}
+
+.live-pill.done {
+  background: #eef9f0;
+  color: #10772d;
+}
+
+.live-pill.error {
+  background: #f0f2f4;
+  color: #6b7682;
+}
+
+.live-pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 999px;
+  background: currentColor;
+  animation: live-pulse 1.2s ease-in-out infinite;
+}
+
+.live-pill.done .live-pulse,
+.live-pill.error .live-pulse {
+  animation: none;
+}
+
+@keyframes live-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.live-button {
+  display: inline-flex;
+  min-height: 38px;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #f0c4be;
+  border-radius: 6px;
+  background: #fdecea;
+  color: #c0392b;
+  padding: 0 13px;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.live-button.active {
+  border-color: #c0392b;
+  background: #c0392b;
+  color: #ffffff;
+}
+
+.icon-button:disabled,
+.scrubber:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
 .transport,
 .topbar-actions {
   display: flex;

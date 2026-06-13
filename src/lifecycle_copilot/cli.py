@@ -23,6 +23,8 @@ def main(argv: list[str] | None = None) -> int:
         return run_onboard(args)
     if args.command == "lint":
         return run_lint(args)
+    if args.command == "serve":
+        return run_serve(args)
 
     parser.error("No command selected.")
     return 2
@@ -55,6 +57,13 @@ def build_parser() -> argparse.ArgumentParser:
     lint.add_argument("spl_file", type=Path)
     lint.add_argument("--out", type=Path, default=None)
     lint.add_argument("--max-iters", type=int, default=5)
+
+    serve = subcommands.add_parser(
+        "serve",
+        help="Stream live self-heal events to the dashboard over SSE.",
+    )
+    serve.add_argument("--host", default="127.0.0.1")
+    serve.add_argument("--port", type=int, default=8765)
     return parser
 
 
@@ -171,6 +180,29 @@ def run_lint(args: argparse.Namespace) -> int:
     )
 
     return 0 if result.status == "clean" else 2
+
+
+def run_serve(args: argparse.Namespace) -> int:
+    import uvicorn
+
+    console = Console()
+    console.print(
+        Panel(
+            "\n".join(
+                [
+                    f"  Live SSE endpoint:  [cyan]http://{args.host}:{args.port}/api/stream?loop=appinspect[/cyan]",
+                    "  Also available:     [cyan]?loop=spl_lint[/cyan]  (both static, no Splunk needed)",
+                    "",
+                    "  In the dashboard, click [bold]Go Live[/bold] on the AppInspect or SPL Lint stage.",
+                ]
+            ),
+            title="Live self-heal stream",
+            border_style="green",
+            expand=False,
+        )
+    )
+    uvicorn.run("lifecycle_copilot.server:app", host=args.host, port=args.port, log_level="warning")
+    return 0
 
 
 def print_next_steps(
