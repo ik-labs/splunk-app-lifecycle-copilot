@@ -7,75 +7,88 @@ on screen — the bonus prize rewards visible MCP orchestration.
 Thesis line to land: **"Splunk's AI explains failures. This resolves, validates,
 and remembers them."**
 
+Flow: **terminal (three loops) → dashboard (overview + stages + provenance) →
+live mode → close.** One shared self-heal engine, three working loops.
+
 ---
 
 ## Pre-roll setup (not recorded)
 
 Do all of this before hitting record, so the live segment can't stall:
 
-- [ ] `docker compose up -d` and wait for **healthy** (`docker inspect -f '{{.State.Health.Status}}' splunk-copilot`). First boot is ~1–2 min.
-- [ ] `.venv/bin/python smoke_test.py` → all 4 checks PASS (run with the venv active so `splunk-appinspect` is on PATH).
-- [ ] Confirm `.env` has a fresh `SPLUNK_MCP_ENCRYPTED_TOKEN` (token mint: `GET /services/mcp_token?username=admin&expires_on=%2B30d`).
-- [ ] Pre-build the dashboard once: `cd ui/dashboard && bun install && bun run dev` (leave it running on `127.0.0.1:5173`).
-- [ ] Delete stale run dirs so the CLI writes fresh: `rm -rf runs/onboarding-demo runs/appinspect-demo`.
-- [ ] Terminal: large font, dark theme, window cropped to ~100 cols. Browser: dashboard tab ready, zoomed so the 5 metric cards and panels are all visible.
-- [ ] Two surfaces only: a terminal and the browser. Optional 3rd cutaway: VS Code with the repo open.
+- [ ] `docker compose up -d` and wait for **healthy** (`docker inspect -f '{{.State.Health.Status}}' splunk-copilot`). First boot is ~1–2 min; a warm restart is ~45s. Only the **onboarding** loop needs Splunk — AppInspect and SPL lint are static.
+- [ ] Confirm `.env` has a fresh `SPLUNK_MCP_ENCRYPTED_TOKEN` (token mint: `GET /services/mcp_token?username=admin&expires_on=%2B30d`). Optional: `.venv/bin/python smoke_test.py` → all checks PASS.
+- [ ] Pre-build the dashboard once: `make dashboard` (`cd ui/dashboard && bun install && bun run dev`), leave it on `127.0.0.1:5173`.
+- [ ] Start the live server in a spare pane: `make serve` (`copilot serve` on `127.0.0.1:8765`) — used in Segment 4.
+- [ ] Delete stale run dirs so the CLI writes fresh: `rm -rf runs/spl-lint-demo runs/appinspect-demo runs/onboarding-demo`.
+- [ ] Three surfaces: a terminal, the browser (dashboard tab, zoomed so the 5 metric cards and panels all fit), and the live-server pane. Optional 4th cutaway: VS Code with the repo open.
 
 ---
 
-## Segment 1 — The problem (0:00–0:20)
+## Segment 1 — The problem (0:00–0:18)
 
 | | |
 |---|---|
-| **Screen** | Title card or the messy `fixtures/onboarding/sample_upi.log` scrolling — raw UPI lines, mixed timestamps, `payer_vpa`, `gstin`. |
-| **Voiceover** | "Onboarding a new log source into Splunk is days of hand-written regex and CIM mapping. Then AppInspect ping-pong before you can ship. And when it's done, that knowledge lives in one engineer's head. Splunk's own AI can *explain* these failures — but nothing closes the loop, or remembers why." |
+| **Screen** | Title card, then the messy `fixtures/onboarding/sample_upi.log` scrolling — raw UPI lines, mixed timestamps, `payer_vpa`, `gstin`. |
+| **Voiceover** | "Getting a Splunk app to production is expert-gated toil: hand-written extraction, AppInspect ping-pong, cost-tuning every search. Splunk's own AI can *explain* these failures — but nothing closes the loop, validates the fix, or remembers why." |
 | **Cut on** | "…remembers why." Hard cut to terminal. |
 
 ---
 
-## Segment 2 — Onboarding loop, live through MCP (0:20–1:05)
+## Segment 2 — The agent, live in the terminal (0:18–1:15)
+
+Run all three loops back to back. They share one engine; only the artifact differs.
 
 | | |
 |---|---|
-| **Command** | `copilot onboard fixtures/onboarding/sample_upi.log --out runs/onboarding-demo` |
-| **Screen** | Terminal runs live. Narrate the real steps as the summary table renders. |
-| **Voiceover** | "The agent ingests 150 raw events over HEC, then validates its extraction against *real indexed events* — through the Splunk MCP server's `splunk_run_query` tool. First candidate: three gaps — a timestamp format it misses, an unmapped CIM field, and unflagged PII. It diagnoses, applies one deterministic patch, and re-validates through MCP — clean." |
-| **Emphasize** | Point at `Status: clean`, `Ingested events: 150`, `Initial failures 3 → Final failures 0`. Say the words "MCP server" out loud here. |
-| **Cut to** | Browser → dashboard, **Onboarding** stage selected. Press **Restart** to replay. |
-| **Voiceover (dashboard)** | "Same run, visualized. Watch the MCP tool-call count climb as it queries Splunk. Six CIM fields mapped — including `vpa → dest` — and `payer_vpa` and `payer_mobile` flagged as PII. This isn't a suggestion. It's verified against live events." |
-| **Emphasize** | The **MCP tool calls** metric and the **CIM Mapping & PII** panel (PII chips visible). |
+| **Command 1** | `copilot lint fixtures/spl_lint/costly_search.spl --out runs/spl-lint-demo` |
+| **Voiceover** | "A deliberately costly search. The agent finds three cost anti-patterns — `index=*`, no time bound, an unbounded sort — diagnoses each, and rewrites it deterministically. Clean." |
+| **Emphasize** | The healed query line: `earliest=-24h index=main … \| sort 1000 …`. `3 → 0`. |
+| **Command 2** | `copilot appinspect fixtures/appinspect/broken_app --out runs/appinspect-demo` |
+| **Voiceover** | "Now a broken app. AppInspect finds three real failures — a forbidden `local/`, a `user-seed.conf`, a forwarding `outputs.conf`. The agent patches each with a deterministic function — the LLM never touches the bytes — and re-runs AppInspect until green." |
+| **Emphasize** | `Status: clean`, `Initial failures 3 → Final failures 0`. |
+| **Command 3** | `copilot onboard fixtures/onboarding/sample_upi.log --out runs/onboarding-demo` |
+| **Voiceover** | "And the live one. The agent ingests 150 raw events over HEC, then validates its field extraction against *real indexed events* — through the Splunk MCP server's `splunk_run_query` tool. Three gaps on the first candidate; one deterministic patch; re-validated through MCP — clean." |
+| **Emphasize** | Say **"MCP server"** out loud. Point at `Ingested events: 150`, `3 → 0`, and the `Splunk source` line. This is the bonus-prize signal — give it the most terminal time. |
+| **Cut on** | The "What to look at next" panel pointing to the dashboard. |
 
 ---
 
-## Segment 3 — AppInspect loop, the hero shot (1:05–2:00)
+## Segment 3 — The dashboard: one engine, three loops (1:15–2:15)
 
 | | |
 |---|---|
-| **Command** | `copilot appinspect fixtures/appinspect/broken_app --out runs/appinspect-demo` |
-| **Screen** | Terminal runs the real AppInspect self-heal loop. |
-| **Voiceover** | "Now a deliberately broken app. AppInspect finds three real failures: a forbidden `local/` directory, a `user-seed.conf`, and a forwarding `outputs.conf`. The agent diagnoses each, a deterministic patch function fixes it — the LLM never touches the bytes — and it re-runs AppInspect after every fix. Red… to green. Autonomously." |
-| **Cut to** | Dashboard → click the **AppInspect** stage in the sidebar. Press **Restart**. |
-| **Emphasize** | The Self-Heal Timeline: three iteration cards going Detect → Diagnose → Patch → Revalidate (pass). Let the "3 → 0" metric land. This is the most visceral moment — give it the most screen time. |
+| **Screen** | Browser → dashboard, **Lifecycle** overview (lands here by default). |
+| **Voiceover (overview)** | "The same self-heal engine drove all three loops. Three clean runs, side by side — nine failures healed, real MCP calls counted." |
+| **Cut to** | **Onboarding** stage. |
+| **Voiceover** | "Onboarding, visualized: the MCP tool-call count, six CIM fields mapped — including `vpa → dest` — and `payer_vpa` and `payer_mobile` flagged as PII. Verified against live events, not guessed." |
+| **Emphasize** | The **MCP tool calls** metric and the **CIM Mapping & PII** panel (PII chips). |
+| **Cut to** | **AppInspect** stage. |
+| **Voiceover** | "AppInspect: three iteration cards, Detect → Diagnose → Patch → Revalidate, red to green." |
+| **Emphasize** | Let the **Self-Heal Timeline** and `3 → 0` land. |
+| **Cut to** | **SPL Lint** stage, then the **Provenance Ledger** panel. |
+| **Voiceover** | "And every fix — across every loop — is recorded: the failure, diagnosis, patch, rationale, validation result, timestamped. The next engineer isn't lost. Splunk explains; this remembers." |
+| **Emphasize** | Scroll the Provenance Ledger; point to one diagnosis + rationale row with its changed-path chip. |
 
 ---
 
-## Segment 4 — Platform thesis + provenance (2:00–2:35)
+## Segment 4 — Live mode (2:15–2:40)
 
 | | |
 |---|---|
-| **Screen** | Dashboard Provenance Ledger panel, then a quick flash of `architecture_diagram.md`. |
-| **Voiceover** | "Both loops ran on the *same* self-heal engine — that reuse is the platform. And every fix is recorded: the failure, the diagnosis, the patch, the rationale, the validation result, timestamped. The next engineer isn't lost — the institutional memory is right here." |
-| **Emphasize** | Scroll the ledger; point to one rationale line. Flash the architecture diagram showing stages 3–5 as the roadmap. |
+| **Screen** | Dashboard on the **SPL Lint** stage. Click **Go Live**. |
+| **Voiceover** | "That was replay. This is live — the dashboard streaming a self-heal loop over SSE as it actually runs. Same engine, same render, real time." |
+| **Emphasize** | The pulsing **Live** pill; the timeline filling in iteration by iteration to **Clean**. (Server: `make serve`, already running.) |
 
 ---
 
-## Segment 5 — Close (2:35–2:55)
+## Segment 5 — Close (2:40–2:58)
 
 | | |
 |---|---|
-| **Screen** | Optional VS Code cutaway: **Terminal → Run Task → "Copilot: SPL lint self-heal"** (same `copilot` entry point from the IDE, via the committed `.vscode/tasks.json`), then repo URL / title card. |
-| **Voiceover** | "A week of expert-gated toil, compressed to an afternoon — with an audit trail, and the Splunk MCP server orchestrating real actions across the lifecycle. Splunk explains. We resolve, validate, and remember." |
-| **End on** | Repo URL on screen. |
+| **Screen** | Optional VS Code cutaway: **Terminal → Run Task → "Copilot: SPL lint self-heal"** (same `copilot` entry point from the IDE, via committed `.vscode/tasks.json`), then repo URL / title card. |
+| **Voiceover** | "Three lifecycle stages on one engine, the Splunk MCP server orchestrating real actions, and an audit trail for every fix. Splunk explains. We resolve, validate, and remember." |
+| **End on** | Repo URL on screen: `github.com/ik-labs/splunk-app-lifecycle-copilot`. |
 
 ---
 
@@ -83,15 +96,15 @@ Do all of this before hitting record, so the live segment can't stall:
 
 | Segment | Window | Budget |
 |---|---|---|
-| 1 Problem | 0:00–0:20 | 20s |
-| 2 Onboarding (MCP) | 0:20–1:05 | 45s |
-| 3 AppInspect (hero) | 1:05–2:00 | 55s |
-| 4 Thesis + provenance | 2:00–2:35 | 35s |
-| 5 Close | 2:35–2:55 | 20s |
+| 1 Problem | 0:00–0:18 | 18s |
+| 2 Terminal — three loops | 0:18–1:15 | 57s |
+| 3 Dashboard — overview + stages + provenance | 1:15–2:15 | 60s |
+| 4 Live mode | 2:15–2:40 | 25s |
+| 5 Close | 2:40–2:58 | 18s |
 
 ## Recording tips
 
-- The live `copilot onboard` run takes a few seconds (HEC ingest + index settle + two MCP queries). If you want a tighter cut, record it live once, then trim dead air — do **not** fake it; the realness is the point.
-- If the live MCP call is risky on the day, the dashboard replays both loops from committed JSON with zero dependencies — record that as the safety net.
-- Keep the MCP tool-call metric and the `splunk_run_query` mentions prominent; that's the explicit bonus-prize signal.
-- Name Splunk's own AppInspect AI explicitly and position above it ("explains" vs "resolves/validates/remembers") — judges reward honest, sharp scoping.
+- The live `copilot onboard` run takes a few seconds (HEC ingest + index settle + MCP queries). Record it live once and trim dead air — do **not** fake it; the realness is the point. `lint` is instant and `appinspect` ~10s, so the terminal segment paces well.
+- If the live MCP call is risky on the day, the dashboard replays all three loops from committed JSON with zero dependencies — record that as the safety net. Live mode (Segment 4) also runs only the static loops, so it never needs Splunk.
+- Keep the **MCP tool-call** metric and the `splunk_run_query` mentions prominent; that's the explicit bonus-prize signal.
+- Name Splunk's own AppInspect AI explicitly and position above it ("explains" vs "resolves / validates / remembers") — judges reward honest, sharp scoping. Stages 3 & 5 remain labeled roadmap.
