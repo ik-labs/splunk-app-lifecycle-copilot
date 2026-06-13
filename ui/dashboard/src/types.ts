@@ -1,4 +1,4 @@
-export type LoopName = "onboarding" | "appinspect";
+export type LoopName = "onboarding" | "appinspect" | "spl_lint";
 export type RunStatus = "clean" | "capped";
 export type ValidationStatus = "pass" | "fail";
 

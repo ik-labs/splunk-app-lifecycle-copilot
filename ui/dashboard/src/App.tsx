@@ -16,6 +16,7 @@ import {
   ShieldAlert,
   ShieldCheck,
   SkipBack,
+  Terminal,
   Upload,
   Workflow
 } from "lucide-react";
@@ -307,7 +308,7 @@ function Sidebar({ activeStage, activeView, onSelectOverview, onSelectStage }: S
           </span>
           <span>
             <strong>Lifecycle</strong>
-            <small>{activeView === "overview" ? "Overview" : "Both loops"}</small>
+            <small>{activeView === "overview" ? "Overview" : "All loops"}</small>
           </span>
           <Gauge size={18} />
         </button>
@@ -327,18 +328,28 @@ function Sidebar({ activeStage, activeView, onSelectOverview, onSelectStage }: S
                 <strong>{stageData.label}</strong>
                 <small>{isActive ? "Active replay" : "Switch replay"}</small>
               </span>
-              {loop === "onboarding" ? <Network size={18} /> : <Activity size={18} />}
+              {stageIcon(loop, 18)}
             </button>
           );
         })}
       </nav>
 
       <div className="sidebar-footer">
-        <span>Dual-stage self-heal replay</span>
+        <span>Multi-stage self-heal replay</span>
         <span>Committed demo events — no live Splunk required</span>
       </div>
     </aside>
   );
+}
+
+function stageIcon(loop: LoopName, size: number) {
+  if (loop === "onboarding") {
+    return <Network size={size} />;
+  }
+  if (loop === "spl_lint") {
+    return <Terminal size={size} />;
+  }
+  return <Activity size={size} />;
 }
 
 interface StageSummaryEntry {
@@ -362,7 +373,10 @@ function LifecycleOverview({
       <header className="overview-header">
         <div>
           <h1>Lifecycle Overview</h1>
-          <p>One self-heal engine, two loops — raw logs to AppInspect-green, validated and remembered.</p>
+          <p>
+            One self-heal engine, {summaries.length} loops — diagnose,
+            deterministically patch, re-validate, and remember.
+          </p>
         </div>
         <div className="overview-aggregate">
           <span>
@@ -386,7 +400,7 @@ function LifecycleOverview({
       <footer className="overview-footer">
         <Workflow size={16} />
         <span>
-          The same deterministic self-heal engine drove both loops; every fix is recorded in the
+          The same deterministic self-heal engine drove every loop; every fix is recorded in the
           provenance ledger.
         </span>
       </footer>
@@ -400,7 +414,9 @@ function StageSummaryCard({ entry, onOpen }: { entry: StageSummaryEntry; onOpen:
   const extra =
     loop === "onboarding"
       ? `${summary.fieldMappings} CIM mapped · ${summary.piiFlags} PII flagged`
-      : `${summary.healed} deterministic patches applied`;
+      : loop === "spl_lint"
+        ? `${summary.healed} cost anti-patterns rewritten`
+        : `${summary.healed} deterministic patches applied`;
 
   return (
     <article className="summary-card">
@@ -410,7 +426,7 @@ function StageSummaryCard({ entry, onOpen }: { entry: StageSummaryEntry; onOpen:
           <strong>{stage.label}</strong>
           <small>{stage.tagline}</small>
         </div>
-        {loop === "onboarding" ? <Network size={20} /> : <Activity size={20} />}
+        {stageIcon(loop, 20)}
       </header>
 
       <div className={`summary-status ${summary.runStatus}`}>

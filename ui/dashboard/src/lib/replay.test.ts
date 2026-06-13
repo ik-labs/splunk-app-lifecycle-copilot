@@ -4,6 +4,8 @@ import appinspectEvents from "../../../../demo/appinspect_events.json";
 import appinspectProvenanceRaw from "../../../../demo/appinspect_provenance.jsonl?raw";
 import onboardingEvents from "../../../../demo/onboarding_events.json";
 import onboardingProvenanceRaw from "../../../../demo/onboarding_provenance.jsonl?raw";
+import splLintEvents from "../../../../demo/spl_lint_events.json";
+import splLintProvenanceRaw from "../../../../demo/spl_lint_provenance.jsonl?raw";
 import {
   buildAuditTrail,
   deriveReplayState,
@@ -196,6 +198,44 @@ describe("summarizeStage", () => {
       fieldMappings: 0,
       piiFlags: 0
     });
+  });
+
+  it("summarizes the SPL lint loop for the lifecycle overview", () => {
+    const summary = summarizeStage(splLintEvents as ReplayEvent[]);
+    expect(summary).toMatchObject({
+      runStatus: "clean",
+      initialFailures: 3,
+      finalFailures: 0,
+      healed: 3,
+      iterations: 3,
+      mcpCalls: 0,
+      fieldMappings: 0,
+      piiFlags: 0
+    });
+  });
+});
+
+describe("deriveReplayState (spl_lint)", () => {
+  const splLint = splLintEvents as ReplayEvent[];
+
+  it("finds the three cost findings and heals them all", () => {
+    const state = deriveReplayState(splLint, splLint.length - 1);
+    expect(state.runStatus).toBe("clean");
+    expect(state.failures.map((failure) => failure.check)).toEqual([
+      "spl_wildcard_index",
+      "spl_all_time",
+      "spl_unbounded_sort"
+    ]);
+    expect(state.metrics.healed).toBe(3);
+    expect(state.metrics.finalFailures).toBe(0);
+  });
+
+  it("builds a three-entry audit trail from the persisted provenance", () => {
+    const rows = buildAuditTrail(parseProvenance(splLintProvenanceRaw), []);
+    expect(rows).toHaveLength(3);
+    expect(rows[0].failure).toContain("spl_wildcard_index");
+    expect(rows[0].result).toBe("pass");
+    expect(rows[0].changedPaths).toEqual(["costly_search.spl"]);
   });
 });
 
