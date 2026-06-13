@@ -5,6 +5,7 @@ from datetime import datetime
 from pathlib import Path
 
 from rich.console import Console
+from rich.panel import Panel
 from rich.table import Table
 
 from .appinspect.loop import AppInspectLoop
@@ -74,6 +75,13 @@ def run_appinspect(args: argparse.Namespace) -> int:
     table.add_row("Run artifacts", str(result.run_dir))
     console.print(table)
 
+    print_next_steps(
+        console,
+        result.run_dir,
+        status=result.status,
+        extra=[("AppInspect reports", "appinspect/")],
+    )
+
     return 0 if result.status == "clean" else 2
 
 
@@ -106,7 +114,53 @@ def run_onboard(args: argparse.Namespace) -> int:
     table.add_row("Run artifacts", str(result.run_dir))
     console.print(table)
 
+    print_next_steps(
+        console,
+        result.run_dir,
+        status=result.status,
+        extra=[("Candidates & validation", "onboarding/")],
+    )
+
     return 0 if result.status == "clean" else 2
+
+
+def print_next_steps(
+    console: Console,
+    run_dir: Path,
+    *,
+    status: str,
+    extra: list[tuple[str, str]],
+) -> None:
+    """Print an obvious 'what to look at next' panel after a run."""
+    clean = status == "clean"
+    headline = (
+        "[green]Healed to clean[/green] — every diagnosis, patch, and validation is recorded."
+        if clean
+        else f"[yellow]Run ended '{status}'[/yellow] — open the provenance ledger for the remaining failure."
+    )
+    pointers: list[tuple[str, str]] = [
+        ("Provenance ledger (audit trail)", "provenance.jsonl"),
+        ("Run summary", "summary.json"),
+        *extra,
+        ("Dashboard replay events", "events.json"),
+    ]
+    lines = [headline, ""]
+    width = max(len(label) for label, _ in pointers)
+    for label, rel in pointers:
+        lines.append(f"  {label.ljust(width)}  [cyan]{run_dir / rel}[/cyan]")
+    lines.append("")
+    lines.append(
+        "  Replay it:  [bold]cd ui/dashboard && bun run dev[/bold], then "
+        f"\"Load events\" -> [cyan]{run_dir / 'events.json'}[/cyan]"
+    )
+    console.print(
+        Panel(
+            "\n".join(lines),
+            title="What to look at next",
+            border_style="green" if clean else "yellow",
+            expand=False,
+        )
+    )
 
 
 def default_run_dir(prefix: str) -> Path:
