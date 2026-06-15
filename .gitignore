@@ -45,6 +45,9 @@ demo/*.local.json
 demo/*.mp4
 demo/*.mov
 
+# Local-only recording notes (teleprompter script kept off the public repo)
+demo/demo_narration.md
+
 # Logs and temporary runtime files
 *.log
 !fixtures/**/*.log

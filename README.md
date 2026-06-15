@@ -100,6 +100,10 @@ Start Splunk:
 docker compose up -d
 ```
 
+Ports are driven by `.env` (`SPLUNK_WEB_PORT`, `SPLUNK_HEC_PORT`, `SPLUNK_MGMT_PORT`).
+If host port 8088 is already in use, set a different `SPLUNK_HEC_PORT` (the local dev
+box uses `18088`); the onboarding loop reads the same value, so HEC ingest stays in sync.
+
 Wait for the container to become healthy, then run:
 
 ```bash
@@ -144,6 +148,57 @@ Expected summary:
 failure: 3
 error: 0
 ```
+
+## Splunk MCP Server Setup (onboarding loop only)
+
+The onboarding loop is the only path that needs the Splunk MCP Server app and an
+encrypted token. The static loops (AppInspect, SPL lint), the dashboard, and Live
+mode need none of this — skip this section if you are not running onboarding.
+
+Verified against Splunk MCP Server **v1.2.0** on `splunk/splunk:latest`. The
+commands below use `$SPLUNK_MGMT_PORT` (default `8089`) and the admin password
+from `.env`.
+
+**1. Install the app.** Download "Splunk MCP Server" from Splunkbase, then in
+Splunk Web go to **Apps -> Manage Apps -> Install app from file** and upload the
+`.tar.gz` (or `docker cp` it into `$SPLUNK_HOME/etc/apps/` and restart the
+container). Confirm it is installed and enabled:
+
+```bash
+curl -sk -u "admin:$SPLUNK_PASSWORD" \
+  "https://localhost:8089/services/apps/local/Splunk_MCP_Server?output_mode=json" \
+  | python3 -c "import sys,json;e=json.load(sys.stdin)['entry'][0]['content'];print('enabled' if not e.get('disabled') else 'DISABLED','v'+str(e.get('version')))"
+```
+
+**2. Enable token authentication** (once; idempotent):
+
+```bash
+curl -sk -u "admin:$SPLUNK_PASSWORD" -X POST \
+  "https://localhost:8089/services/admin/token-auth/tokens_auth" -d disabled=0
+```
+
+**3. Mint the encrypted token.** The app RSA-encrypts a JWT (audience `mcp`);
+`mcp.conf` sets `require_encrypted_token = true`, so this is **not** a plain REST
+bearer token. The `+` in the relative expiry **must** be URL-encoded as `%2B` or
+the app rejects the request:
+
+```bash
+curl -sk -u "admin:$SPLUNK_PASSWORD" \
+  "https://localhost:8089/services/mcp_token?username=admin&expires_on=%2B30d"
+# -> {"token": "<encrypted-token>"}   (valid 30 days)
+```
+
+**4. Put the values in `.env`:**
+
+```bash
+SPLUNK_MCP_ENDPOINT=https://localhost:8089/services/mcp
+SPLUNK_MCP_ENCRYPTED_TOKEN=<the token value from step 3>
+SPLUNK_MCP_TLS_VERIFY=false   # local self-signed Docker dev
+```
+
+The token expires after 30 days; re-mint by repeating steps 2-3. The `saia_*`
+tools are optional and only appear when Splunk AI Assistant is installed — the
+onboarding loop succeeds with `splunk_run_query` alone.
 
 ## Onboarding MCP Slice
 
